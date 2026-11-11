@@ -1,0 +1,38 @@
+station_name,line,opening_date,is_route_2020,lat,lon,source_url
+Centrepoint,Red,2009-09-09,False,25.2304,55.3911,https://en.wikipedia.org/wiki/Dubai_Metro
+Airport Terminal 3,Red,2009-09-09,False,25.2496,55.3592,https://en.wikipedia.org/wiki/Dubai_Metro
+City Centre Deira,Red,2009-09-09,False,25.2526,55.3316,https://en.wikipedia.org/wiki/Dubai_Metro
+Al Rigga,Red,2009-09-09,False,25.2633,55.3237,https://en.wikipedia.org/wiki/Dubai_Metro
+Union,Red/Green,2009-09-09,False,25.2662,55.3135,https://en.wikipedia.org/wiki/Dubai_Metro
+BurJuman,Red/Green,2009-09-09,False,25.2549,55.3045,https://en.wikipedia.org/wiki/Dubai_Metro
+Max,Red,2009-09-09,False,25.2354,55.2916,https://en.wikipedia.org/wiki/Dubai_Metro
+Financial Centre,Red,2009-09-09,False,25.2108,55.2756,https://en.wikipedia.org/wiki/Dubai_Metro
+Mall of the Emirates,Red,2009-09-09,False,25.1202,55.1983,https://en.wikipedia.org/wiki/Dubai_Metro
+Onpassive,Red,2009-09-09,False,25.1342,55.2111,https://en.wikipedia.org/wiki/Dubai_Metro
+Emirates,Red,2010-04-30,False,25.2414,55.3679,https://en.wikipedia.org/wiki/Dubai_Metro
+Airport Terminal 1,Red,2010-04-30,False,25.2485,55.3519,https://en.wikipedia.org/wiki/Dubai_Metro
+ADCB,Red,2010-04-30,False,25.2435,55.2981,https://en.wikipedia.org/wiki/Dubai_Metro
+Emirates Towers,Red,2010-04-30,False,25.2176,55.2820,https://en.wikipedia.org/wiki/Dubai_Metro
+Burj Khalifa / Dubai Mall,Red,2010-01-04,False,25.2014,55.2696,https://en.wikipedia.org/wiki/Dubai_Metro
+Business Bay,Red,2010-10-15,False,25.1912,55.2603,https://en.wikipedia.org/wiki/Dubai_Metro
+Equiti,Red,2010-10-15,False,25.1342,55.2111,https://en.wikipedia.org/wiki/Dubai_Metro
+Dubai Internet City,Red,2010-04-30,False,25.0956,55.1726,https://en.wikipedia.org/wiki/Dubai_Metro
+Al Khail,Red,2010-10-15,False,25.0866,55.1588,https://en.wikipedia.org/wiki/Dubai_Metro
+Sobha Realty,Red,2010-04-30,False,25.0785,55.1483,https://en.wikipedia.org/wiki/Dubai_Metro
+DMCC,Red,2010-10-15,False,25.0677,55.1387,https://en.wikipedia.org/wiki/Dubai_Metro
+Ibn Battuta,Red,2010-04-30,False,25.0408,55.1173,https://en.wikipedia.org/wiki/Dubai_Metro
+Jebel Ali,Red,2011-03-11,False,25.0567,55.1269,https://en.wikipedia.org/wiki/Dubai_Metro
+e&,Green,2011-09-09,False,25.2622,55.4017,https://en.wikipedia.org/wiki/Dubai_Metro
+Al Qusais,Green,2011-09-09,False,25.2768,55.3772,https://en.wikipedia.org/wiki/Dubai_Metro
+Al Ras,Green,2011-09-09,False,25.2683,55.2939,https://en.wikipedia.org/wiki/Dubai_Metro
+Al Ghubaiba,Green,2011-09-09,False,25.2617,55.2886,https://en.wikipedia.org/wiki/Dubai_Metro
+Gold Souq,Green,2011-09-09,False,25.2747,55.3008,https://en.wikipedia.org/wiki/Dubai_Metro
+Creek,Green,2014-03-01,False,25.2194,55.3358,https://en.wikipedia.org/wiki/Dubai_Metro
+Al Jadaf,Green,2014-03-01,False,25.2229,55.3249,https://en.wikipedia.org/wiki/Dubai_Metro
+The Gardens,Red (Route 2020),2021-01-01,True,25.0472,55.1372,https://www.rta.ae/wps/portal/rta/ae/home/about-rta/metro-tram
+Discovery Gardens,Red (Route 2020),2021-01-01,True,25.0427,55.1378,https://www.rta.ae/wps/portal/rta/ae/home/about-rta/metro-tram
+Al Furjan,Red (Route 2020),2021-01-01,True,25.0294,55.1407,https://www.rta.ae/wps/portal/rta/ae/home/about-rta/metro-tram
+Jumeirah Golf Estates,Red (Route 2020),2021-06-01,True,25.0211,55.1743,https://www.rta.ae/wps/portal/rta/ae/home/about-rta/metro-tram
+Dubai Investment Park,Red (Route 2020),2021-06-01,True,24.9899,55.1610,https://www.rta.ae/wps/portal/rta/ae/home/about-rta/metro-tram
+Expo 2020,Red (Route 2020),2021-06-01,True,24.9628,55.1456,https://www.rta.ae/wps/portal/rta/ae/home/about-rta/metro-tram
+InsuranceMarket,Red,,False,25.1112,55.1843,https://www.rta.ae/wps/portal/rta/ae/home/about-rta/metro-tram

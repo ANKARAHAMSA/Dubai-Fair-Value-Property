@@ -1,10 +1,10 @@
 # DubaiFairValue Verification Report
 
-- **Timestamp (UTC)**: `2026-11-11T05:48:05Z`
-- **Git SHA**: `no-git`
-- **Data Manifest Hash**: `none (synthetic/sample mode)`
-- **Test Count**: `13`
-- **Code Coverage (`src/dfv`)**: `90%`
+- **Timestamp (UTC)**: `2026-11-11T05:55:37Z`
+- **Git SHA**: `0b832ce`
+- **Data Manifest Hash**: `946ce591cc0c55b7`
+- **Test Count**: `27`
+- **Code Coverage (`src/dfv`)**: `80%`
 - **Overall Status**: `PASS`
 
 ## Check Summary
@@ -12,9 +12,9 @@
 | Check | Status | Details |
 | --- | --- | --- |
 | Lint & mypy | **PASS** | ruff check/format and mypy passed |
-| Secrets & .env gitignore | **PASS** | Scanned 27 files cleanly |
-| Pytest & coverage | **PASS** | 13 passed, coverage 90% |
-| Data contracts (Pandera) | **SKIPPED** | Scheduled for Phase 1 |
+| Secrets & .env gitignore | **PASS** | Scanned 46 files cleanly |
+| Pytest & coverage | **PASS** | 27 passed, coverage 80% |
+| Data contracts (Pandera) | **PASS** | Contracts passed |
 | Model acceptance gates | **SKIPPED** | Scheduled for Phase 3 |
 | API contract & latency tests | **SKIPPED** | Scheduled for Phase 5 |
 | Streamlit app smoke tests | **SKIPPED** | Scheduled for Phase 6 |
@@ -26,7 +26,6 @@
 
 ## Skipped Checks & Justifications
 
-- **Data contracts (Pandera)**: Scheduled for Phase 1
 - **Model acceptance gates**: Scheduled for Phase 3
 - **API contract & latency tests**: Scheduled for Phase 5
 - **Streamlit app smoke tests**: Scheduled for Phase 6

@@ -1,0 +1,72 @@
+entity_type,raw_name,canonical_name,notes
+area,marsa dubai,Dubai Marina,Official DLD district name for Dubai Marina
+area,dubai marina,Dubai Marina,Canonical English name
+area,al barsha south fourth,Jumeirah Village Circle,Official DLD district name for JVC
+area,jumeirah village circle,Jumeirah Village Circle,Canonical English name
+area,jvc,Jumeirah Village Circle,Common abbreviation
+area,al barsha south fifth,Jumeirah Village Triangle,Official DLD district name for JVT
+area,al barshaa south third,Arjan,Official DLD district name for Arjan
+area,hadaeq sheikh mohammed bin rashid,Dubai Hills Estate,Official DLD district name for Dubai Hills Estate
+area,dubai hills,Dubai Hills Estate,Short form
+area,dubai hills estate,Dubai Hills Estate,Canonical English name
+area,al khairan first,Dubai Creek Harbour,Official DLD district name for Dubai Creek Harbour
+area,dubai creek harbour,Dubai Creek Harbour,Canonical English name
+area,burj khalifa,Downtown Dubai,Official DLD district name for Downtown Dubai
+area,downtown dubai,Downtown Dubai,Canonical English name
+area,business bay,Business Bay,Canonical English name
+area,palm jumeirah,Palm Jumeirah,Canonical English name
+area,al thanyah fifth,Jumeirah Lake Towers,Official DLD district name for JLT
+area,jumeirah lake towers,Jumeirah Lake Towers,Canonical English name
+area,jlt,Jumeirah Lake Towers,Common abbreviation
+area,jabal ali first,Al Furjan,DLD district covering Al Furjan / Discovery Gardens
+area,al furjan,Al Furjan,Canonical English name
+area,discovery gardens,Discovery Gardens,Canonical English name
+area,al merkadh,MBR City / Sobha Hartland,DLD district covering MBR City / Sobha Hartland
+area,al hebiah third,Damac Hills,DLD district covering Damac Hills
+area,al hebiah fourth,Dubai Sports City,DLD district covering Dubai Sports City
+area,damac hills,Damac Hills,Canonical English name
+area,arabian ranches,Arabian Ranches,Canonical English name
+area,wadi al safa 3,Majan,Official DLD district covering Majan
+area,wadi al safa 5,Dubailand Residence Complex,Official DLD district covering Dubailand Residence Complex
+area,madinat al mataar,Dubai South,Official DLD district name for Dubai South
+area,dubai south,Dubai South,Canonical English name
+area,nadd hessa,Dubai Silicon Oasis,Official DLD district covering Dubai Silicon Oasis
+area,al warsan first,International City,Official DLD district covering International City
+area,al wasl,City Walk,DLD district covering City Walk
+area,city walk,City Walk,Canonical English name
+area,emaar beachfront,Emaar Beachfront,Canonical English name
+area,madinat dubai almelaheyah,Dubai Maritime City,Official DLD district covering Dubai Maritime City
+developer,emaar,Emaar Properties,Canonical developer name
+developer,emaar properties,Emaar Properties,Canonical developer name
+developer,damac,DAMAC Properties,Canonical developer name
+developer,damac properties,DAMAC Properties,Canonical developer name
+developer,nakheel,Nakheel,Canonical developer name
+developer,meraas,Meraas,Canonical developer name
+developer,sobha,Sobha Realty,Canonical developer name
+developer,sobha realty,Sobha Realty,Canonical developer name
+developer,ellington,Ellington Properties,Canonical developer name
+developer,ellington properties,Ellington Properties,Canonical developer name
+developer,danube,Danube Properties,Canonical developer name
+developer,danube properties,Danube Properties,Canonical developer name
+developer,azizi,Azizi Developments,Canonical developer name
+developer,azizi developments,Azizi Developments,Canonical developer name
+developer,dubai properties,Dubai Properties,Canonical developer name
+developer,select group,Select Group,Canonical developer name
+metro,noor bank metro station,Equiti,Historical name for Equiti station
+metro,noor bank,Equiti,Historical name for Equiti station
+metro,first abu dhabi bank metro station,InsuranceMarket,Historical name for InsuranceMarket (Sharaf DG/Mashreq)
+metro,sharaf dg metro station,InsuranceMarket,Historical name for InsuranceMarket
+metro,dubai marina metro station,Sobha Realty,Historical name for Sobha Realty station
+metro,nakheel harbour & tower,Onpassive,Historical name mapping
+metro,al rashidiya,Centrepoint,Historical name for Centrepoint station
+metro,deira city centre,City Centre Deira,GTFS alias for City Centre Deira
+metro,burj khalifa/ dubai mall,Burj Khalifa / Dubai Mall,GTFS spacing alias
+metro,al jafiliya,Max,Historical name for Max station
+metro,al karama,ADCB,Historical name for ADCB station
+metro,etisalat,e&,Historical name for e& station
+metro,jebel ali metro station,Jebel Ali,Canonical station name
+metro,ibn battuta metro station,Ibn Battuta,Canonical station name
+metro,dmcc metro station,DMCC,Canonical station name
+metro,nakheel metro station,Nakheel,Canonical station name
+metro,business bay metro station,Business Bay,Canonical station name
+metro,burj khalifa / dubai mall metro station,Burj Khalifa / Dubai Mall,Canonical station name
