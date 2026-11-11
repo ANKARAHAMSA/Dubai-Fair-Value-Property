@@ -49,10 +49,11 @@ cache/
 *.sqlite3
 *.db
 
-# Models / large artifacts (keep small sample/metadata if needed, ignore heavy local runs or track selectively)
-models/*.pkl
-models/*.joblib
-models/*.txt
+# Models / large artifacts (keep small sample/metadata committed, ignore heavy local runs)
+/models/*.pkl
+/models/*.joblib
+/models/*.txt
+!data/sample/models/
 
 # Notebooks checkpoints
 .ipynb_checkpoints/

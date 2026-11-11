@@ -1,0 +1,169 @@
+{
+  "dataset_mode": "processed_dld_fallback",
+  "model_architecture": "lightgbm_tuned",
+  "rows_total": 459145,
+  "split_sizes": {
+    "train": 332060,
+    "val_tune": 28238,
+    "calibration": 28239,
+    "test": 70608
+  },
+  "training_window": {
+    "train_start": "2015-01-01",
+    "train_end": "2023-08-22",
+    "val_start": "2023-08-23",
+    "cal_end": "2024-02-22",
+    "test_start": "2024-02-23",
+    "test_end": "2024-08-22"
+  },
+  "baselines": [
+    {
+      "name": "baseline_global_median",
+      "mdape": 0.33319,
+      "mape": 0.35195,
+      "rmse_log": 0.54962,
+      "r2_log": -0.58995
+    },
+    {
+      "name": "baseline_trailing_12m_segment",
+      "mdape": 0.13069,
+      "mape": 0.20006,
+      "rmse_log": 0.27585,
+      "r2_log": 0.59949
+    },
+    {
+      "name": "baseline_ridge_log",
+      "mdape": 0.09484,
+      "mape": 0.13059,
+      "rmse_log": 0.17936,
+      "r2_log": 0.83067
+    },
+    {
+      "name": "ridge_residual_lightgbm",
+      "mdape": 0.0805,
+      "mape": 0.1115,
+      "rmse_log": 0.15706,
+      "r2_log": 0.87016
+    }
+  ],
+  "best_params": {
+    "n_estimators": 367,
+    "learning_rate": 0.0667178709107003,
+    "num_leaves": 32,
+    "min_child_samples": 88,
+    "subsample": 0.9497327922401265,
+    "colsample_bytree": 0.7243186887373967,
+    "reg_alpha": 0.004705059281907649,
+    "reg_lambda": 0.03549878832196503
+  },
+  "optuna_trials": [
+    {
+      "trial": 0,
+      "val_mdape": 0.07185
+    },
+    {
+      "trial": 1,
+      "val_mdape": 0.07134
+    },
+    {
+      "trial": 2,
+      "val_mdape": 0.07437
+    },
+    {
+      "trial": 3,
+      "val_mdape": 0.07344
+    },
+    {
+      "trial": 4,
+      "val_mdape": 0.0733
+    },
+    {
+      "trial": 5,
+      "val_mdape": 0.07618
+    },
+    {
+      "trial": 6,
+      "val_mdape": 0.07464
+    },
+    {
+      "trial": 7,
+      "val_mdape": 0.07829
+    },
+    {
+      "trial": 8,
+      "val_mdape": 0.07375
+    },
+    {
+      "trial": 9,
+      "val_mdape": 0.07211
+    }
+  ],
+  "test_metrics": {
+    "model_mdape": 0.06891,
+    "model_mape": 0.09918,
+    "model_rmse_log": 0.14442,
+    "model_r2_log": 0.89022,
+    "alt_comparison_name": "ridge_residual_lightgbm",
+    "alt_comparison_mdape": 0.0805,
+    "best_baseline_name": "baseline_ridge_log",
+    "best_baseline_mdape": 0.09484,
+    "mdape_improvement_abs": 0.02593,
+    "mdape_improvement_rel_pct": 27.34,
+    "interval_coverage": 0.9012,
+    "interval_median_rel_width": 0.4694,
+    "interval_median_abs_width_aed": 635664.67,
+    "spatial_mdape": 0.19908,
+    "spatial_r2_log": 0.6288,
+    "repro_max_log_diff": 0.0
+  },
+  "rolling_cv": [
+    {
+      "fold_start": "2022-08-22",
+      "fold_end": "2023-02-22",
+      "n_train": 238652,
+      "n_test": 43535,
+      "name": "rolling_cv_2022-08",
+      "mdape": 0.11516,
+      "mape": 0.15918,
+      "rmse_log": 0.24741,
+      "r2_log": 0.77789
+    },
+    {
+      "fold_start": "2023-02-22",
+      "fold_end": "2023-08-22",
+      "n_train": 282187,
+      "n_test": 49370,
+      "name": "rolling_cv_2023-02",
+      "mdape": 0.10454,
+      "mape": 0.15064,
+      "rmse_log": 0.24206,
+      "r2_log": 0.79038
+    },
+    {
+      "fold_start": "2023-08-22",
+      "fold_end": "2024-02-22",
+      "n_train": 331557,
+      "n_test": 56489,
+      "name": "rolling_cv_2023-08",
+      "mdape": 0.09713,
+      "mape": 0.14119,
+      "rmse_log": 0.22123,
+      "r2_log": 0.79811
+    }
+  ],
+  "spatial_holdout": {
+    "held_out_projects": 680,
+    "held_out_rows": 88057,
+    "name": "spatial_unseen_projects",
+    "mdape": 0.19908,
+    "mape": 0.25472,
+    "rmse_log": 0.32551,
+    "r2_log": 0.6288
+  },
+  "gates": {
+    "beats_best_baseline": true,
+    "coverage_within_5pct_of_90": true,
+    "reproducible_with_seed": true,
+    "all_passed": true
+  }
+}

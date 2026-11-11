@@ -214,7 +214,7 @@ def build_sample_dataset(paths: Paths = PATHS, seed: int = 42) -> dict[str, Path
     """Create small committed sample dataset (< 5 MB) in data/sample/ for clean-clone CI/demo."""
     paths.sample.mkdir(parents=True, exist_ok=True)
     bundle = generate_synthetic_bundle(
-        n_sales=3500, n_rents=4000, seed=seed, include_dirty_rows=False
+        n_sales=5000, n_rents=5000, seed=seed, include_dirty_rows=False
     )
     out_paths = {
         "transactions": paths.sample / "transactions.parquet",
