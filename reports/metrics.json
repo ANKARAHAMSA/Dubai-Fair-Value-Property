@@ -165,5 +165,6 @@
     "coverage_within_5pct_of_90": true,
     "reproducible_with_seed": true,
     "all_passed": true
-  }
+  },
+  "api_predict_latency_ms": 14.65
 }

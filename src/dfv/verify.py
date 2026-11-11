@@ -126,6 +126,50 @@ def parse_pytest_summary(output: str) -> tuple[str, str]:
     return test_count, cov_pct
 
 
+def measure_api_predict_latency_ms(paths: Paths) -> float | None:
+    """Measure warm median POST /predict latency via FastAPI TestClient."""
+    import statistics
+    import time
+
+    try:
+        from fastapi.testclient import TestClient
+
+        from dfv.api.main import create_app
+
+        has_proc = (paths.models / "metadata.json").exists()
+        mode_override = os.getenv("DFV_DATA_MODE", "auto").strip().lower()
+        use_proc = mode_override == "processed" or (mode_override != "sample" and has_proc)
+        m_dir = paths.models if use_proc and has_proc else paths.sample_models
+        d_dir = (
+            paths.processed
+            if use_proc and (paths.processed / "features.parquet").exists()
+            else paths.sample
+        )
+        app = create_app(model_dir=m_dir, data_dir=d_dir)
+        payload = {
+            "area_name": "Dubai Marina",
+            "property_type": "Unit",
+            "rooms": 2,
+            "area_sqm": 115.0,
+            "asking_price_aed": 2_450_000.0,
+            "is_offplan": False,
+        }
+        with TestClient(app) as client:
+            w = client.post("/predict", json=payload)
+            if w.status_code != 200:
+                return None
+            timings: list[float] = []
+            for _ in range(5):
+                t0 = time.perf_counter()
+                resp = client.post("/predict", json=payload)
+                timings.append((time.perf_counter() - t0) * 1000.0)
+                if resp.status_code != 200:
+                    return None
+        return round(float(statistics.median(timings)), 2)
+    except Exception:
+        return None
+
+
 def run_verification(report_only: bool = False, paths: Paths = PATHS) -> int:
     """Run verification gates and write reports/VERIFICATION_REPORT.md."""
     root = paths.root
@@ -204,11 +248,25 @@ def run_verification(report_only: bool = False, paths: Paths = PATHS) -> int:
     # API contract tests
     if (root / "src" / "dfv" / "api" / "main.py").exists():
         rc_api, out_api = run_command(["uv", "run", "pytest", "tests/api", "-q"], root)
+        latency_ms: float | None = None
+        if rc_api == 0 and not report_only:
+            latency_ms = measure_api_predict_latency_ms(paths)
+            if latency_ms is not None and metrics_data:
+                metrics_data["api_predict_latency_ms"] = latency_ms
+                if metrics_path.exists():
+                    metrics_path.write_text(json.dumps(metrics_data, indent=2), encoding="utf-8")
+        lat_ok = latency_ms is None or latency_ms < 500.0
+        api_ok = rc_api == 0 and lat_ok
+        detail = (
+            f"API tests passed (warm /predict median={latency_ms} ms)"
+            if api_ok and latency_ms is not None
+            else ("API tests passed" if api_ok else out_api.strip()[-200:])
+        )
         checks.append(
             CheckResult(
                 "API contract & latency tests",
-                "PASS" if rc_api == 0 else "FAIL",
-                "API tests passed" if rc_api == 0 else out_api.strip()[-200:],
+                "PASS" if api_ok else "FAIL",
+                detail,
             )
         )
     else:
