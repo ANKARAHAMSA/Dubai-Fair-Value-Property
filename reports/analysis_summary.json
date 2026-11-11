@@ -1,0 +1,116 @@
+{
+  "rows_analyzed": 459145,
+  "developer_premium_overall": {
+    "term": "is_offplan",
+    "log_coef": 0.24894,
+    "se_robust": 0.00111,
+    "pct_effect": 28.27,
+    "ci_low_pct": 27.99,
+    "ci_high_pct": 28.55,
+    "p_value": 0.0,
+    "n_obs": 458669,
+    "r2_within": 0.2144
+  },
+  "metro_sales_bands": {},
+  "metro_rents_bands": {
+    "band_lt500m": {
+      "term": "band_lt500m",
+      "log_coef": 0.10185,
+      "se_robust": 0.003,
+      "pct_effect": 10.72,
+      "ci_low_pct": 10.07,
+      "ci_high_pct": 11.37,
+      "p_value": 0.0,
+      "n_obs": 9982
+    },
+    "band_500_1000m": {
+      "term": "band_500_1000m",
+      "log_coef": 0.05839,
+      "se_robust": 0.00323,
+      "pct_effect": 6.01,
+      "ci_low_pct": 5.34,
+      "ci_high_pct": 6.69,
+      "p_value": 0.0,
+      "n_obs": 9982
+    },
+    "band_1000_2000m": {
+      "term": "band_1000_2000m",
+      "log_coef": 0.02373,
+      "se_robust": 0.0048,
+      "pct_effect": 2.4,
+      "ci_low_pct": 1.44,
+      "ci_high_pct": 3.37,
+      "p_value": 1e-06,
+      "n_obs": 9982
+    }
+  },
+  "top_yield_areas": [
+    {
+      "area_name": "Jumeirah Village Circle",
+      "gross_yield_pct": 8.36,
+      "risk_score": 18.8,
+      "yield_per_risk_score": 5.14,
+      "median_price_aed": 942093.0,
+      "median_sale_ppsqm": 13846.9,
+      "median_rent_ppsqm": 1153.4,
+      "sales_12m_count": 15147,
+      "rents_12m_count": 49,
+      "confidence": "High"
+    },
+    {
+      "area_name": "Al Furjan",
+      "gross_yield_pct": 9.34,
+      "risk_score": 26.8,
+      "yield_per_risk_score": 4.933,
+      "median_price_aed": 1539921.0,
+      "median_sale_ppsqm": 12147.7,
+      "median_rent_ppsqm": 1126.4,
+      "sales_12m_count": 2779,
+      "rents_12m_count": 50,
+      "confidence": "High"
+    },
+    {
+      "area_name": "Arabian Ranches",
+      "gross_yield_pct": 8.31,
+      "risk_score": 31.9,
+      "yield_per_risk_score": 4.023,
+      "median_price_aed": 5356538.0,
+      "median_sale_ppsqm": 11513.4,
+      "median_rent_ppsqm": 949.3,
+      "sales_12m_count": 585,
+      "rents_12m_count": 21,
+      "confidence": "High"
+    },
+    {
+      "area_name": "Downtown Dubai",
+      "gross_yield_pct": 6.06,
+      "risk_score": 27.2,
+      "yield_per_risk_score": 3.178,
+      "median_price_aed": 3125080.0,
+      "median_sale_ppsqm": 28506.5,
+      "median_rent_ppsqm": 1718.4,
+      "sales_12m_count": 4036,
+      "rents_12m_count": 63,
+      "confidence": "High"
+    },
+    {
+      "area_name": "Dubai Creek Harbour",
+      "gross_yield_pct": 5.57,
+      "risk_score": 24.9,
+      "yield_per_risk_score": 3.047,
+      "median_price_aed": 2558220.0,
+      "median_sale_ppsqm": 24762.3,
+      "median_rent_ppsqm": 1380.2,
+      "sales_12m_count": 3428,
+      "rents_12m_count": 50,
+      "confidence": "High"
+    }
+  ],
+  "official_index_check": {
+    "available": true,
+    "overlap_months": 116,
+    "pearson_corr": 0.9082,
+    "mean_abs_index_gap": 6.82
+  },
+  "quarterly_growth_rows": 2258
+}

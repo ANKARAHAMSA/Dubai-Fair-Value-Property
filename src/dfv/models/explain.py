@@ -11,7 +11,8 @@ import numpy as np
 import pandas as pd
 import shap
 
-matplotlib.use("Agg")
+if "inline" not in matplotlib.get_backend().lower():
+    matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 FEATURE_READABLE_LABELS: dict[str, str] = {

@@ -1,0 +1,170 @@
+{
+  "methodology": "Fixed-effects hedonic OLS (Area x Quarter FE, reference >= 2 km) + Two-way FE Route 2020 event study",
+  "caveat": "Distance-band premiums represent observational within-area associations rather than isolated causal effects (proximity correlates with building age, density, and retail clusters). Real DLD fallback uses area-centroid coordinates, so within-area sales distance variance is absent until project-level coordinates/dld_projects-open are supplied.",
+  "within_area_identifiable": true,
+  "sales_distance_bands": {
+    "band_lt500m": {
+      "term": "band_lt500m",
+      "log_coef": 0.14294,
+      "se_robust": 0.00472,
+      "pct_effect": 15.37,
+      "ci_low_pct": 14.3,
+      "ci_high_pct": 16.44,
+      "p_value": 0.0,
+      "n_obs": 4959
+    },
+    "band_500_1000m": {
+      "term": "band_500_1000m",
+      "log_coef": 0.07272,
+      "se_robust": 0.00506,
+      "pct_effect": 7.54,
+      "ci_low_pct": 6.48,
+      "ci_high_pct": 8.62,
+      "p_value": 0.0,
+      "n_obs": 4959
+    },
+    "band_1000_2000m": {
+      "term": "band_1000_2000m",
+      "log_coef": 0.03518,
+      "se_robust": 0.00729,
+      "pct_effect": 3.58,
+      "ci_low_pct": 2.11,
+      "ci_high_pct": 5.07,
+      "p_value": 1e-06,
+      "n_obs": 4959
+    }
+  },
+  "sales_cross_area_bands": {},
+  "sales_r2_within": 0.2999,
+  "sales_n_obs": 4959,
+  "sales_band_counts": {
+    "<500m": 1402,
+    "500-1000m": 918,
+    "1000-2000m": 286,
+    ">=2000m": 2394
+  },
+  "rents_distance_bands": {
+    "band_lt500m": {
+      "term": "band_lt500m",
+      "log_coef": 0.09389,
+      "se_robust": 0.00445,
+      "pct_effect": 9.84,
+      "ci_low_pct": 8.89,
+      "ci_high_pct": 10.81,
+      "p_value": 0.0,
+      "n_obs": 4958
+    },
+    "band_500_1000m": {
+      "term": "band_500_1000m",
+      "log_coef": 0.05316,
+      "se_robust": 0.00476,
+      "pct_effect": 5.46,
+      "ci_low_pct": 4.48,
+      "ci_high_pct": 6.45,
+      "p_value": 0.0,
+      "n_obs": 4958
+    },
+    "band_1000_2000m": {
+      "term": "band_1000_2000m",
+      "log_coef": 0.01088,
+      "se_robust": 0.00685,
+      "pct_effect": 1.09,
+      "ci_low_pct": -0.25,
+      "ci_high_pct": 2.46,
+      "p_value": 0.112259,
+      "n_obs": 4958
+    }
+  },
+  "rents_r2_within": 0.401,
+  "rents_n_obs": 4958,
+  "route_2020_event_study": {
+    "available": true,
+    "fe_specification": "Two-way additive FE (Area + Year-Quarter)",
+    "stations_evaluated": [
+      "Al Furjan",
+      "Discovery Gardens",
+      "Expo 2020",
+      "The Gardens"
+    ],
+    "treated_rows": 160,
+    "control_rows": 1369,
+    "did_post_effect": {
+      "term": "treated_post",
+      "log_coef": 0.06479,
+      "se_robust": 0.01574,
+      "pct_effect": 6.69,
+      "ci_low_pct": 3.45,
+      "ci_high_pct": 10.04,
+      "p_value": 3.8e-05,
+      "n_obs": 1529
+    },
+    "r2_within": 0.1534,
+    "n_obs": 1529,
+    "pre_trend_parallel_pass": true,
+    "event_study_curve": [
+      {
+        "rel_quarter": -4,
+        "pct_effect": -0.19,
+        "ci_low_pct": -8.06,
+        "ci_high_pct": 8.36,
+        "p_value": 0.9646
+      },
+      {
+        "rel_quarter": -3,
+        "pct_effect": -2.14,
+        "ci_low_pct": -12.77,
+        "ci_high_pct": 9.79,
+        "p_value": 0.7125
+      },
+      {
+        "rel_quarter": -2,
+        "pct_effect": 3.63,
+        "ci_low_pct": -5.06,
+        "ci_high_pct": 13.12,
+        "p_value": 0.4248
+      },
+      {
+        "rel_quarter": -1,
+        "pct_effect": 0.0,
+        "ci_low_pct": 0.0,
+        "ci_high_pct": 0.0,
+        "p_value": 1.0
+      },
+      {
+        "rel_quarter": 0,
+        "pct_effect": 7.58,
+        "ci_low_pct": -1.96,
+        "ci_high_pct": 18.04,
+        "p_value": 0.1229
+      },
+      {
+        "rel_quarter": 1,
+        "pct_effect": 4.72,
+        "ci_low_pct": -4.24,
+        "ci_high_pct": 14.51,
+        "p_value": 0.3126
+      },
+      {
+        "rel_quarter": 2,
+        "pct_effect": 5.16,
+        "ci_low_pct": -3.5,
+        "ci_high_pct": 14.59,
+        "p_value": 0.2514
+      },
+      {
+        "rel_quarter": 3,
+        "pct_effect": 4.22,
+        "ci_low_pct": -4.9,
+        "ci_high_pct": 14.2,
+        "p_value": 0.3765
+      },
+      {
+        "rel_quarter": 4,
+        "pct_effect": 10.33,
+        "ci_low_pct": 1.46,
+        "ci_high_pct": 19.97,
+        "p_value": 0.0215
+      }
+    ]
+  }
+}

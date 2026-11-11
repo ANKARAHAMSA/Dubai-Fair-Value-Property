@@ -1,0 +1,403 @@
+{
+  "methodology": "Hedonic OLS with Area x Quarter and Project x Quarter fixed effects (FWL + HC1 SEs)",
+  "caveat": "Observational association only; does not adjust for unobserved post-handover payment plans, launch incentives, view/floor tiers, or snagging risk. Named developers with thin samples (<8 off-plan & ready sales each) are excluded.",
+  "unknown_developer_pct": 0.0,
+  "overall_area_quarter_fe": {
+    "term": "is_offplan",
+    "log_coef": 0.06569,
+    "se_robust": 0.00353,
+    "pct_effect": 6.79,
+    "ci_low_pct": 6.05,
+    "ci_high_pct": 7.53,
+    "p_value": 0.0,
+    "n_obs": 4959,
+    "r2_within": 0.1395
+  },
+  "overall_project_quarter_fe": {
+    "term": "is_offplan",
+    "log_coef": 0.0563,
+    "se_robust": 0.00536,
+    "pct_effect": 5.79,
+    "ci_low_pct": 4.69,
+    "ci_high_pct": 6.91,
+    "p_value": 0.0,
+    "n_obs": 3984,
+    "r2_within": 0.1469
+  },
+  "matched_comparison": {
+    "matched_cells": 85,
+    "matched_pct_premium": 8.45,
+    "ci_low_pct": 6.68,
+    "ci_high_pct": 10.24
+  },
+  "by_area": [
+    {
+      "area_name": "City Walk",
+      "n_offplan": 50,
+      "n_ready": 29,
+      "n_used": 69,
+      "pct_premium": 14.15,
+      "ci_low_pct": 6.04,
+      "ci_high_pct": 22.88,
+      "p_value": 0.00043,
+      "offplan_median_ppsqm": 25452.3,
+      "ready_median_ppsqm": 26269.0
+    },
+    {
+      "area_name": "Jumeirah Lake Towers",
+      "n_offplan": 134,
+      "n_ready": 189,
+      "n_used": 323,
+      "pct_premium": 13.01,
+      "ci_low_pct": 9.17,
+      "ci_high_pct": 16.99,
+      "p_value": 0.0,
+      "offplan_median_ppsqm": 17124.3,
+      "ready_median_ppsqm": 16917.5
+    },
+    {
+      "area_name": "Al Furjan",
+      "n_offplan": 171,
+      "n_ready": 163,
+      "n_used": 334,
+      "pct_premium": 12.4,
+      "ci_low_pct": 9.36,
+      "ci_high_pct": 15.53,
+      "p_value": 0.0,
+      "offplan_median_ppsqm": 13942.1,
+      "ready_median_ppsqm": 13793.1
+    },
+    {
+      "area_name": "Dubai Marina",
+      "n_offplan": 266,
+      "n_ready": 279,
+      "n_used": 545,
+      "pct_premium": 11.4,
+      "ci_low_pct": 8.95,
+      "ci_high_pct": 13.9,
+      "p_value": 0.0,
+      "offplan_median_ppsqm": 21855.1,
+      "ready_median_ppsqm": 21857.4
+    },
+    {
+      "area_name": "Dubai Creek Harbour",
+      "n_offplan": 192,
+      "n_ready": 171,
+      "n_used": 362,
+      "pct_premium": 7.52,
+      "ci_low_pct": 4.99,
+      "ci_high_pct": 10.1,
+      "p_value": 0.0,
+      "offplan_median_ppsqm": 20463.7,
+      "ready_median_ppsqm": 21421.6
+    },
+    {
+      "area_name": "Damac Hills",
+      "n_offplan": 112,
+      "n_ready": 126,
+      "n_used": 236,
+      "pct_premium": 6.65,
+      "ci_low_pct": 3.6,
+      "ci_high_pct": 9.8,
+      "p_value": 1e-05,
+      "offplan_median_ppsqm": 12781.9,
+      "ready_median_ppsqm": 12747.8
+    },
+    {
+      "area_name": "Dubai Hills Estate",
+      "n_offplan": 164,
+      "n_ready": 215,
+      "n_used": 379,
+      "pct_premium": 6.37,
+      "ci_low_pct": 3.85,
+      "ci_high_pct": 8.95,
+      "p_value": 0.0,
+      "offplan_median_ppsqm": 17536.1,
+      "ready_median_ppsqm": 18715.3
+    },
+    {
+      "area_name": "Emaar Beachfront",
+      "n_offplan": 46,
+      "n_ready": 23,
+      "n_used": 56,
+      "pct_premium": 6.31,
+      "ci_low_pct": -3.28,
+      "ci_high_pct": 16.85,
+      "p_value": 0.20452,
+      "offplan_median_ppsqm": 29789.7,
+      "ready_median_ppsqm": 33194.6
+    },
+    {
+      "area_name": "Business Bay",
+      "n_offplan": 314,
+      "n_ready": 286,
+      "n_used": 600,
+      "pct_premium": 6.28,
+      "ci_low_pct": 4.2,
+      "ci_high_pct": 8.4,
+      "p_value": 0.0,
+      "offplan_median_ppsqm": 19017.3,
+      "ready_median_ppsqm": 20164.1
+    },
+    {
+      "area_name": "Downtown Dubai",
+      "n_offplan": 208,
+      "n_ready": 279,
+      "n_used": 487,
+      "pct_premium": 6.17,
+      "ci_low_pct": 3.89,
+      "ci_high_pct": 8.5,
+      "p_value": 0.0,
+      "offplan_median_ppsqm": 27746.8,
+      "ready_median_ppsqm": 29516.2
+    },
+    {
+      "area_name": "Arabian Ranches",
+      "n_offplan": 90,
+      "n_ready": 78,
+      "n_used": 161,
+      "pct_premium": 4.7,
+      "ci_low_pct": 0.34,
+      "ci_high_pct": 9.24,
+      "p_value": 0.03417,
+      "offplan_median_ppsqm": 15749.2,
+      "ready_median_ppsqm": 16681.3
+    },
+    {
+      "area_name": "Jumeirah Village Circle",
+      "n_offplan": 454,
+      "n_ready": 252,
+      "n_used": 706,
+      "pct_premium": 4.56,
+      "ci_low_pct": 3.03,
+      "ci_high_pct": 6.12,
+      "p_value": 0.0,
+      "offplan_median_ppsqm": 11575.1,
+      "ready_median_ppsqm": 11696.0
+    },
+    {
+      "area_name": "Dubai South",
+      "n_offplan": 110,
+      "n_ready": 179,
+      "n_used": 289,
+      "pct_premium": 3.22,
+      "ci_low_pct": 0.01,
+      "ci_high_pct": 6.53,
+      "p_value": 0.04932,
+      "offplan_median_ppsqm": 8340.9,
+      "ready_median_ppsqm": 8675.0
+    },
+    {
+      "area_name": "Discovery Gardens",
+      "n_offplan": 104,
+      "n_ready": 75,
+      "n_used": 174,
+      "pct_premium": 0.12,
+      "ci_low_pct": -3.62,
+      "ci_high_pct": 4.01,
+      "p_value": 0.95012,
+      "offplan_median_ppsqm": 10506.2,
+      "ready_median_ppsqm": 11756.8
+    },
+    {
+      "area_name": "Palm Jumeirah",
+      "n_offplan": 153,
+      "n_ready": 88,
+      "n_used": 238,
+      "pct_premium": -1.59,
+      "ci_low_pct": -4.53,
+      "ci_high_pct": 1.45,
+      "p_value": 0.30292,
+      "offplan_median_ppsqm": 28504.7,
+      "ready_median_ppsqm": 30002.4
+    }
+  ],
+  "by_developer": [
+    {
+      "developer_name": "Meraas",
+      "n_offplan": 290,
+      "n_ready": 279,
+      "n_used": 445,
+      "pct_premium": 10.37,
+      "ci_low_pct": 7.24,
+      "ci_high_pct": 13.6,
+      "p_value": 0.0
+    },
+    {
+      "developer_name": "Emaar Properties",
+      "n_offplan": 222,
+      "n_ready": 195,
+      "n_used": 317,
+      "pct_premium": 7.67,
+      "ci_low_pct": 3.53,
+      "ci_high_pct": 11.98,
+      "p_value": 0.00022
+    },
+    {
+      "developer_name": "Danube Properties",
+      "n_offplan": 246,
+      "n_ready": 188,
+      "n_used": 335,
+      "pct_premium": 7.47,
+      "ci_low_pct": 2.99,
+      "ci_high_pct": 12.14,
+      "p_value": 0.0009
+    },
+    {
+      "developer_name": "Ellington Properties",
+      "n_offplan": 147,
+      "n_ready": 273,
+      "n_used": 313,
+      "pct_premium": 7.2,
+      "ci_low_pct": 3.61,
+      "ci_high_pct": 10.92,
+      "p_value": 6e-05
+    },
+    {
+      "developer_name": "Select Group",
+      "n_offplan": 326,
+      "n_ready": 261,
+      "n_used": 490,
+      "pct_premium": 6.04,
+      "ci_low_pct": 3.23,
+      "ci_high_pct": 8.93,
+      "p_value": 2e-05
+    },
+    {
+      "developer_name": "Dubai Properties",
+      "n_offplan": 123,
+      "n_ready": 286,
+      "n_used": 313,
+      "pct_premium": 5.75,
+      "ci_low_pct": 1.04,
+      "ci_high_pct": 10.68,
+      "p_value": 0.01623
+    },
+    {
+      "developer_name": "Sobha Realty",
+      "n_offplan": 285,
+      "n_ready": 179,
+      "n_used": 375,
+      "pct_premium": 5.71,
+      "ci_low_pct": 2.07,
+      "ci_high_pct": 9.48,
+      "p_value": 0.00189
+    },
+    {
+      "developer_name": "Nakheel",
+      "n_offplan": 273,
+      "n_ready": 270,
+      "n_used": 443,
+      "pct_premium": 5.53,
+      "ci_low_pct": 1.57,
+      "ci_high_pct": 9.64,
+      "p_value": 0.00578
+    },
+    {
+      "developer_name": "DAMAC Properties",
+      "n_offplan": 407,
+      "n_ready": 181,
+      "n_used": 500,
+      "pct_premium": 2.05,
+      "ci_low_pct": -0.44,
+      "ci_high_pct": 4.6,
+      "p_value": 0.10799
+    },
+    {
+      "developer_name": "Azizi Developments",
+      "n_offplan": 249,
+      "n_ready": 320,
+      "n_used": 453,
+      "pct_premium": 1.33,
+      "ci_low_pct": -1.8,
+      "ci_high_pct": 4.56,
+      "p_value": 0.40927
+    }
+  ],
+  "time_to_catch_up": [
+    {
+      "area_name": "Jumeirah Village Circle",
+      "evaluated_cohorts": 43,
+      "cohorts_caught_up": 39,
+      "median_catchup_months": 15.0,
+      "status": "Observed catch-up"
+    },
+    {
+      "area_name": "Downtown Dubai",
+      "evaluated_cohorts": 19,
+      "cohorts_caught_up": 19,
+      "median_catchup_months": 21.0,
+      "status": "Observed catch-up"
+    },
+    {
+      "area_name": "Dubai Creek Harbour",
+      "evaluated_cohorts": 14,
+      "cohorts_caught_up": 13,
+      "median_catchup_months": 21.0,
+      "status": "Observed catch-up"
+    },
+    {
+      "area_name": "Business Bay",
+      "evaluated_cohorts": 32,
+      "cohorts_caught_up": 31,
+      "median_catchup_months": 27.0,
+      "status": "Observed catch-up"
+    },
+    {
+      "area_name": "Damac Hills",
+      "evaluated_cohorts": 3,
+      "cohorts_caught_up": 2,
+      "median_catchup_months": 27.0,
+      "status": "Observed catch-up"
+    },
+    {
+      "area_name": "Dubai Marina",
+      "evaluated_cohorts": 28,
+      "cohorts_caught_up": 28,
+      "median_catchup_months": 30.1,
+      "status": "Observed catch-up"
+    },
+    {
+      "area_name": "Discovery Gardens",
+      "evaluated_cohorts": 4,
+      "cohorts_caught_up": 3,
+      "median_catchup_months": 36.0,
+      "status": "Observed catch-up"
+    },
+    {
+      "area_name": "Palm Jumeirah",
+      "evaluated_cohorts": 11,
+      "cohorts_caught_up": 11,
+      "median_catchup_months": 36.0,
+      "status": "Observed catch-up"
+    },
+    {
+      "area_name": "Al Furjan",
+      "evaluated_cohorts": 17,
+      "cohorts_caught_up": 17,
+      "median_catchup_months": 42.0,
+      "status": "Observed catch-up"
+    },
+    {
+      "area_name": "Dubai Hills Estate",
+      "evaluated_cohorts": 16,
+      "cohorts_caught_up": 16,
+      "median_catchup_months": 52.5,
+      "status": "Observed catch-up"
+    },
+    {
+      "area_name": "Jumeirah Lake Towers",
+      "evaluated_cohorts": 9,
+      "cohorts_caught_up": 8,
+      "median_catchup_months": 64.5,
+      "status": "Observed catch-up"
+    },
+    {
+      "area_name": "Dubai South",
+      "evaluated_cohorts": 4,
+      "cohorts_caught_up": 4,
+      "median_catchup_months": 73.5,
+      "status": "Observed catch-up"
+    }
+  ]
+}

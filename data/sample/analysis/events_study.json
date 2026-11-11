@@ -1,0 +1,1388 @@
+{
+  "methodology": "Quality-mix-stratified monthly index (2019=100) + Interrupted Time Series (HC1 OLS) + pre-event placebo tests",
+  "caveat": "Descriptive time-series segmentation cannot separate concurrent global rate cycles, fx/wealth inflows, or supply handovers from policy announcements. Significant placebo breaks indicate pre-existing momentum rather than a clean discontinuity.",
+  "official_index_sanity_check": {
+    "available": true,
+    "overlap_months": 138,
+    "pearson_corr": 0.9462,
+    "mean_abs_index_gap": 3.83
+  },
+  "monthly_series": [
+    {
+      "month": "2015-01-01",
+      "tx_count": 11,
+      "median_ppsqm": 19235.1,
+      "stratified_ppsqm": 19891.8,
+      "computed_index": 122.96,
+      "raw_median_index": 121.25,
+      "official_dld_index": 116.47
+    },
+    {
+      "month": "2015-02-01",
+      "tx_count": 12,
+      "median_ppsqm": 20765.7,
+      "stratified_ppsqm": 21978.2,
+      "computed_index": 135.85,
+      "raw_median_index": 130.9,
+      "official_dld_index": 116.57
+    },
+    {
+      "month": "2015-03-01",
+      "tx_count": 17,
+      "median_ppsqm": 13809.9,
+      "stratified_ppsqm": 18671.6,
+      "computed_index": 115.41,
+      "raw_median_index": 87.05,
+      "official_dld_index": 117.11
+    },
+    {
+      "month": "2015-04-01",
+      "tx_count": 9,
+      "median_ppsqm": 19321.2,
+      "stratified_ppsqm": 18138.1,
+      "computed_index": 112.12,
+      "raw_median_index": 121.79,
+      "official_dld_index": 116.97
+    },
+    {
+      "month": "2015-05-01",
+      "tx_count": 16,
+      "median_ppsqm": 17007.4,
+      "stratified_ppsqm": 20660.2,
+      "computed_index": 127.7,
+      "raw_median_index": 107.21,
+      "official_dld_index": 116.7
+    },
+    {
+      "month": "2015-06-01",
+      "tx_count": 15,
+      "median_ppsqm": 18834.2,
+      "stratified_ppsqm": 20266.1,
+      "computed_index": 125.27,
+      "raw_median_index": 118.72,
+      "official_dld_index": 116.35
+    },
+    {
+      "month": "2015-07-01",
+      "tx_count": 21,
+      "median_ppsqm": 19286.5,
+      "stratified_ppsqm": 19881.9,
+      "computed_index": 122.89,
+      "raw_median_index": 121.57,
+      "official_dld_index": 114.08
+    },
+    {
+      "month": "2015-08-01",
+      "tx_count": 20,
+      "median_ppsqm": 19967.6,
+      "stratified_ppsqm": 19439.5,
+      "computed_index": 120.16,
+      "raw_median_index": 125.87,
+      "official_dld_index": 115.05
+    },
+    {
+      "month": "2015-09-01",
+      "tx_count": 18,
+      "median_ppsqm": 14656.7,
+      "stratified_ppsqm": 18248.5,
+      "computed_index": 112.8,
+      "raw_median_index": 92.39,
+      "official_dld_index": 114.46
+    },
+    {
+      "month": "2015-10-01",
+      "tx_count": 23,
+      "median_ppsqm": 16130.6,
+      "stratified_ppsqm": 16525.0,
+      "computed_index": 102.14,
+      "raw_median_index": 101.68,
+      "official_dld_index": 113.59
+    },
+    {
+      "month": "2015-11-01",
+      "tx_count": 24,
+      "median_ppsqm": 15511.5,
+      "stratified_ppsqm": 18748.6,
+      "computed_index": 115.89,
+      "raw_median_index": 97.78,
+      "official_dld_index": 111.89
+    },
+    {
+      "month": "2015-12-01",
+      "tx_count": 29,
+      "median_ppsqm": 16227.0,
+      "stratified_ppsqm": 18013.2,
+      "computed_index": 111.34,
+      "raw_median_index": 102.29,
+      "official_dld_index": 112.77
+    },
+    {
+      "month": "2016-01-01",
+      "tx_count": 21,
+      "median_ppsqm": 13567.9,
+      "stratified_ppsqm": 17147.0,
+      "computed_index": 105.99,
+      "raw_median_index": 85.53,
+      "official_dld_index": 114.35
+    },
+    {
+      "month": "2016-02-01",
+      "tx_count": 33,
+      "median_ppsqm": 16839.0,
+      "stratified_ppsqm": 17788.1,
+      "computed_index": 109.95,
+      "raw_median_index": 106.15,
+      "official_dld_index": 112.68
+    },
+    {
+      "month": "2016-03-01",
+      "tx_count": 26,
+      "median_ppsqm": 17608.2,
+      "stratified_ppsqm": 18026.8,
+      "computed_index": 111.43,
+      "raw_median_index": 110.99,
+      "official_dld_index": 111.84
+    },
+    {
+      "month": "2016-04-01",
+      "tx_count": 22,
+      "median_ppsqm": 17971.8,
+      "stratified_ppsqm": 19242.8,
+      "computed_index": 118.94,
+      "raw_median_index": 113.29,
+      "official_dld_index": 110.85
+    },
+    {
+      "month": "2016-05-01",
+      "tx_count": 23,
+      "median_ppsqm": 19992.8,
+      "stratified_ppsqm": 19084.4,
+      "computed_index": 117.96,
+      "raw_median_index": 126.03,
+      "official_dld_index": 111.84
+    },
+    {
+      "month": "2016-06-01",
+      "tx_count": 34,
+      "median_ppsqm": 18031.5,
+      "stratified_ppsqm": 18089.4,
+      "computed_index": 111.81,
+      "raw_median_index": 113.66,
+      "official_dld_index": 112.36
+    },
+    {
+      "month": "2016-07-01",
+      "tx_count": 20,
+      "median_ppsqm": 18784.1,
+      "stratified_ppsqm": 19882.6,
+      "computed_index": 122.9,
+      "raw_median_index": 118.41,
+      "official_dld_index": 111.06
+    },
+    {
+      "month": "2016-08-01",
+      "tx_count": 19,
+      "median_ppsqm": 18558.5,
+      "stratified_ppsqm": 21204.2,
+      "computed_index": 131.07,
+      "raw_median_index": 116.98,
+      "official_dld_index": 109.1
+    },
+    {
+      "month": "2016-09-01",
+      "tx_count": 27,
+      "median_ppsqm": 14779.0,
+      "stratified_ppsqm": 18268.3,
+      "computed_index": 112.92,
+      "raw_median_index": 93.16,
+      "official_dld_index": 108.94
+    },
+    {
+      "month": "2016-10-01",
+      "tx_count": 34,
+      "median_ppsqm": 15480.0,
+      "stratified_ppsqm": 17370.2,
+      "computed_index": 107.37,
+      "raw_median_index": 97.58,
+      "official_dld_index": 108.41
+    },
+    {
+      "month": "2016-11-01",
+      "tx_count": 28,
+      "median_ppsqm": 17181.2,
+      "stratified_ppsqm": 18159.7,
+      "computed_index": 112.25,
+      "raw_median_index": 108.3,
+      "official_dld_index": 110.91
+    },
+    {
+      "month": "2016-12-01",
+      "tx_count": 30,
+      "median_ppsqm": 17380.6,
+      "stratified_ppsqm": 18115.8,
+      "computed_index": 111.98,
+      "raw_median_index": 109.56,
+      "official_dld_index": 108.92
+    },
+    {
+      "month": "2017-01-01",
+      "tx_count": 35,
+      "median_ppsqm": 17170.8,
+      "stratified_ppsqm": 18256.4,
+      "computed_index": 112.85,
+      "raw_median_index": 108.24,
+      "official_dld_index": 108.96
+    },
+    {
+      "month": "2017-02-01",
+      "tx_count": 19,
+      "median_ppsqm": 17245.0,
+      "stratified_ppsqm": 16569.0,
+      "computed_index": 102.42,
+      "raw_median_index": 108.71,
+      "official_dld_index": 108.28
+    },
+    {
+      "month": "2017-03-01",
+      "tx_count": 29,
+      "median_ppsqm": 17823.3,
+      "stratified_ppsqm": 18001.7,
+      "computed_index": 111.27,
+      "raw_median_index": 112.35,
+      "official_dld_index": 108.01
+    },
+    {
+      "month": "2017-04-01",
+      "tx_count": 35,
+      "median_ppsqm": 18369.5,
+      "stratified_ppsqm": 18910.4,
+      "computed_index": 116.89,
+      "raw_median_index": 115.79,
+      "official_dld_index": 106.63
+    },
+    {
+      "month": "2017-05-01",
+      "tx_count": 30,
+      "median_ppsqm": 18192.9,
+      "stratified_ppsqm": 17258.9,
+      "computed_index": 106.68,
+      "raw_median_index": 114.68,
+      "official_dld_index": 106.07
+    },
+    {
+      "month": "2017-06-01",
+      "tx_count": 30,
+      "median_ppsqm": 18935.9,
+      "stratified_ppsqm": 17643.0,
+      "computed_index": 109.05,
+      "raw_median_index": 119.36,
+      "official_dld_index": 105.57
+    },
+    {
+      "month": "2017-07-01",
+      "tx_count": 28,
+      "median_ppsqm": 14262.5,
+      "stratified_ppsqm": 17157.5,
+      "computed_index": 106.05,
+      "raw_median_index": 89.9,
+      "official_dld_index": 106.19
+    },
+    {
+      "month": "2017-08-01",
+      "tx_count": 42,
+      "median_ppsqm": 16454.6,
+      "stratified_ppsqm": 16265.7,
+      "computed_index": 100.54,
+      "raw_median_index": 103.72,
+      "official_dld_index": 105.43
+    },
+    {
+      "month": "2017-09-01",
+      "tx_count": 32,
+      "median_ppsqm": 18762.4,
+      "stratified_ppsqm": 18335.6,
+      "computed_index": 113.34,
+      "raw_median_index": 118.27,
+      "official_dld_index": 105.05
+    },
+    {
+      "month": "2017-10-01",
+      "tx_count": 40,
+      "median_ppsqm": 17807.7,
+      "stratified_ppsqm": 17765.1,
+      "computed_index": 109.81,
+      "raw_median_index": 112.25,
+      "official_dld_index": 105.23
+    },
+    {
+      "month": "2017-11-01",
+      "tx_count": 29,
+      "median_ppsqm": 16757.4,
+      "stratified_ppsqm": 16313.3,
+      "computed_index": 100.84,
+      "raw_median_index": 105.63,
+      "official_dld_index": 103.41
+    },
+    {
+      "month": "2017-12-01",
+      "tx_count": 37,
+      "median_ppsqm": 18284.5,
+      "stratified_ppsqm": 17963.8,
+      "computed_index": 111.04,
+      "raw_median_index": 115.26,
+      "official_dld_index": 103.42
+    },
+    {
+      "month": "2018-01-01",
+      "tx_count": 28,
+      "median_ppsqm": 16489.7,
+      "stratified_ppsqm": 16879.3,
+      "computed_index": 104.33,
+      "raw_median_index": 103.94,
+      "official_dld_index": 105.01
+    },
+    {
+      "month": "2018-02-01",
+      "tx_count": 40,
+      "median_ppsqm": 16946.0,
+      "stratified_ppsqm": 17287.4,
+      "computed_index": 106.86,
+      "raw_median_index": 106.82,
+      "official_dld_index": 104.86
+    },
+    {
+      "month": "2018-03-01",
+      "tx_count": 32,
+      "median_ppsqm": 17117.8,
+      "stratified_ppsqm": 16839.9,
+      "computed_index": 104.09,
+      "raw_median_index": 107.9,
+      "official_dld_index": 104.7
+    },
+    {
+      "month": "2018-04-01",
+      "tx_count": 36,
+      "median_ppsqm": 16077.3,
+      "stratified_ppsqm": 17385.8,
+      "computed_index": 107.47,
+      "raw_median_index": 101.34,
+      "official_dld_index": 102.83
+    },
+    {
+      "month": "2018-05-01",
+      "tx_count": 29,
+      "median_ppsqm": 16960.8,
+      "stratified_ppsqm": 16728.6,
+      "computed_index": 103.4,
+      "raw_median_index": 106.91,
+      "official_dld_index": 102.66
+    },
+    {
+      "month": "2018-06-01",
+      "tx_count": 37,
+      "median_ppsqm": 14680.1,
+      "stratified_ppsqm": 16100.3,
+      "computed_index": 99.52,
+      "raw_median_index": 92.54,
+      "official_dld_index": 103.28
+    },
+    {
+      "month": "2018-07-01",
+      "tx_count": 34,
+      "median_ppsqm": 16842.6,
+      "stratified_ppsqm": 15836.8,
+      "computed_index": 97.89,
+      "raw_median_index": 106.17,
+      "official_dld_index": 100.76
+    },
+    {
+      "month": "2018-08-01",
+      "tx_count": 33,
+      "median_ppsqm": 16713.4,
+      "stratified_ppsqm": 16885.9,
+      "computed_index": 104.38,
+      "raw_median_index": 105.35,
+      "official_dld_index": 101.52
+    },
+    {
+      "month": "2018-09-01",
+      "tx_count": 37,
+      "median_ppsqm": 14913.1,
+      "stratified_ppsqm": 17011.9,
+      "computed_index": 105.15,
+      "raw_median_index": 94.01,
+      "official_dld_index": 101.69
+    },
+    {
+      "month": "2018-10-01",
+      "tx_count": 37,
+      "median_ppsqm": 16092.0,
+      "stratified_ppsqm": 16152.2,
+      "computed_index": 99.84,
+      "raw_median_index": 101.44,
+      "official_dld_index": 100.79
+    },
+    {
+      "month": "2018-11-01",
+      "tx_count": 41,
+      "median_ppsqm": 17312.0,
+      "stratified_ppsqm": 16478.4,
+      "computed_index": 101.86,
+      "raw_median_index": 109.13,
+      "official_dld_index": 101.56
+    },
+    {
+      "month": "2018-12-01",
+      "tx_count": 36,
+      "median_ppsqm": 16513.2,
+      "stratified_ppsqm": 16054.7,
+      "computed_index": 99.24,
+      "raw_median_index": 104.09,
+      "official_dld_index": 100.42
+    },
+    {
+      "month": "2019-01-01",
+      "tx_count": 30,
+      "median_ppsqm": 16121.8,
+      "stratified_ppsqm": 15581.6,
+      "computed_index": 96.31,
+      "raw_median_index": 101.62,
+      "official_dld_index": 99.03
+    },
+    {
+      "month": "2019-02-01",
+      "tx_count": 26,
+      "median_ppsqm": 15863.1,
+      "stratified_ppsqm": 16049.1,
+      "computed_index": 99.2,
+      "raw_median_index": 99.99,
+      "official_dld_index": 99.68
+    },
+    {
+      "month": "2019-03-01",
+      "tx_count": 50,
+      "median_ppsqm": 14735.8,
+      "stratified_ppsqm": 15260.0,
+      "computed_index": 94.33,
+      "raw_median_index": 92.89,
+      "official_dld_index": 99.28
+    },
+    {
+      "month": "2019-04-01",
+      "tx_count": 36,
+      "median_ppsqm": 15797.2,
+      "stratified_ppsqm": 16043.4,
+      "computed_index": 99.17,
+      "raw_median_index": 99.58,
+      "official_dld_index": 100.84
+    },
+    {
+      "month": "2019-05-01",
+      "tx_count": 38,
+      "median_ppsqm": 15627.6,
+      "stratified_ppsqm": 16494.2,
+      "computed_index": 101.95,
+      "raw_median_index": 98.51,
+      "official_dld_index": 100.65
+    },
+    {
+      "month": "2019-06-01",
+      "tx_count": 32,
+      "median_ppsqm": 17092.6,
+      "stratified_ppsqm": 17105.4,
+      "computed_index": 105.73,
+      "raw_median_index": 107.74,
+      "official_dld_index": 100.61
+    },
+    {
+      "month": "2019-07-01",
+      "tx_count": 35,
+      "median_ppsqm": 12739.3,
+      "stratified_ppsqm": 15848.9,
+      "computed_index": 97.97,
+      "raw_median_index": 80.3,
+      "official_dld_index": 100.6
+    },
+    {
+      "month": "2019-08-01",
+      "tx_count": 37,
+      "median_ppsqm": 16129.7,
+      "stratified_ppsqm": 15916.3,
+      "computed_index": 98.38,
+      "raw_median_index": 101.67,
+      "official_dld_index": 100.73
+    },
+    {
+      "month": "2019-09-01",
+      "tx_count": 45,
+      "median_ppsqm": 16577.8,
+      "stratified_ppsqm": 16797.7,
+      "computed_index": 103.83,
+      "raw_median_index": 104.5,
+      "official_dld_index": 101.88
+    },
+    {
+      "month": "2019-10-01",
+      "tx_count": 43,
+      "median_ppsqm": 16181.9,
+      "stratified_ppsqm": 17235.2,
+      "computed_index": 106.53,
+      "raw_median_index": 102.0,
+      "official_dld_index": 99.8
+    },
+    {
+      "month": "2019-11-01",
+      "tx_count": 33,
+      "median_ppsqm": 16609.6,
+      "stratified_ppsqm": 15914.3,
+      "computed_index": 98.37,
+      "raw_median_index": 104.7,
+      "official_dld_index": 100.01
+    },
+    {
+      "month": "2019-12-01",
+      "tx_count": 43,
+      "median_ppsqm": 16891.8,
+      "stratified_ppsqm": 15890.9,
+      "computed_index": 98.22,
+      "raw_median_index": 106.48,
+      "official_dld_index": 100.01
+    },
+    {
+      "month": "2020-01-01",
+      "tx_count": 33,
+      "median_ppsqm": 15746.9,
+      "stratified_ppsqm": 16389.0,
+      "computed_index": 101.3,
+      "raw_median_index": 99.26,
+      "official_dld_index": 100.23
+    },
+    {
+      "month": "2020-02-01",
+      "tx_count": 27,
+      "median_ppsqm": 16788.3,
+      "stratified_ppsqm": 16605.0,
+      "computed_index": 102.64,
+      "raw_median_index": 105.83,
+      "official_dld_index": 100.27
+    },
+    {
+      "month": "2020-03-01",
+      "tx_count": 26,
+      "median_ppsqm": 13929.1,
+      "stratified_ppsqm": 15230.4,
+      "computed_index": 94.14,
+      "raw_median_index": 87.8,
+      "official_dld_index": 101.25
+    },
+    {
+      "month": "2020-04-01",
+      "tx_count": 33,
+      "median_ppsqm": 16542.3,
+      "stratified_ppsqm": 16356.0,
+      "computed_index": 101.1,
+      "raw_median_index": 104.28,
+      "official_dld_index": 99.7
+    },
+    {
+      "month": "2020-05-01",
+      "tx_count": 36,
+      "median_ppsqm": 13972.4,
+      "stratified_ppsqm": 15191.8,
+      "computed_index": 93.9,
+      "raw_median_index": 88.08,
+      "official_dld_index": 96.33
+    },
+    {
+      "month": "2020-06-01",
+      "tx_count": 27,
+      "median_ppsqm": 16082.2,
+      "stratified_ppsqm": 17069.0,
+      "computed_index": 105.51,
+      "raw_median_index": 101.38,
+      "official_dld_index": 94.85
+    },
+    {
+      "month": "2020-07-01",
+      "tx_count": 45,
+      "median_ppsqm": 15634.0,
+      "stratified_ppsqm": 15517.7,
+      "computed_index": 95.92,
+      "raw_median_index": 98.55,
+      "official_dld_index": 91.8
+    },
+    {
+      "month": "2020-08-01",
+      "tx_count": 37,
+      "median_ppsqm": 14325.8,
+      "stratified_ppsqm": 14599.4,
+      "computed_index": 90.24,
+      "raw_median_index": 90.3,
+      "official_dld_index": 92.78
+    },
+    {
+      "month": "2020-09-01",
+      "tx_count": 33,
+      "median_ppsqm": 14641.0,
+      "stratified_ppsqm": 14474.4,
+      "computed_index": 89.47,
+      "raw_median_index": 92.29,
+      "official_dld_index": 94.01
+    },
+    {
+      "month": "2020-10-01",
+      "tx_count": 49,
+      "median_ppsqm": 14231.4,
+      "stratified_ppsqm": 14985.4,
+      "computed_index": 92.63,
+      "raw_median_index": 89.71,
+      "official_dld_index": 91.28
+    },
+    {
+      "month": "2020-11-01",
+      "tx_count": 35,
+      "median_ppsqm": 15096.7,
+      "stratified_ppsqm": 15176.0,
+      "computed_index": 93.81,
+      "raw_median_index": 95.16,
+      "official_dld_index": 95.94
+    },
+    {
+      "month": "2020-12-01",
+      "tx_count": 42,
+      "median_ppsqm": 13478.2,
+      "stratified_ppsqm": 16119.7,
+      "computed_index": 99.64,
+      "raw_median_index": 84.96,
+      "official_dld_index": 98.25
+    },
+    {
+      "month": "2021-01-01",
+      "tx_count": 46,
+      "median_ppsqm": 15301.5,
+      "stratified_ppsqm": 16158.3,
+      "computed_index": 99.88,
+      "raw_median_index": 96.45,
+      "official_dld_index": 99.93
+    },
+    {
+      "month": "2021-02-01",
+      "tx_count": 40,
+      "median_ppsqm": 15738.5,
+      "stratified_ppsqm": 16459.2,
+      "computed_index": 101.74,
+      "raw_median_index": 99.21,
+      "official_dld_index": 101.36
+    },
+    {
+      "month": "2021-03-01",
+      "tx_count": 38,
+      "median_ppsqm": 16280.1,
+      "stratified_ppsqm": 16627.4,
+      "computed_index": 102.78,
+      "raw_median_index": 102.62,
+      "official_dld_index": 101.1
+    },
+    {
+      "month": "2021-04-01",
+      "tx_count": 40,
+      "median_ppsqm": 12549.8,
+      "stratified_ppsqm": 15877.9,
+      "computed_index": 98.14,
+      "raw_median_index": 79.11,
+      "official_dld_index": 103.63
+    },
+    {
+      "month": "2021-05-01",
+      "tx_count": 40,
+      "median_ppsqm": 16831.4,
+      "stratified_ppsqm": 16745.7,
+      "computed_index": 103.51,
+      "raw_median_index": 106.1,
+      "official_dld_index": 103.71
+    },
+    {
+      "month": "2021-06-01",
+      "tx_count": 51,
+      "median_ppsqm": 15356.6,
+      "stratified_ppsqm": 16996.8,
+      "computed_index": 105.06,
+      "raw_median_index": 96.8,
+      "official_dld_index": 103.93
+    },
+    {
+      "month": "2021-07-01",
+      "tx_count": 33,
+      "median_ppsqm": 16063.4,
+      "stratified_ppsqm": 17475.2,
+      "computed_index": 108.02,
+      "raw_median_index": 101.26,
+      "official_dld_index": 103.25
+    },
+    {
+      "month": "2021-08-01",
+      "tx_count": 44,
+      "median_ppsqm": 17047.9,
+      "stratified_ppsqm": 17230.7,
+      "computed_index": 106.51,
+      "raw_median_index": 107.46,
+      "official_dld_index": 104.52
+    },
+    {
+      "month": "2021-09-01",
+      "tx_count": 44,
+      "median_ppsqm": 16318.3,
+      "stratified_ppsqm": 17830.5,
+      "computed_index": 110.21,
+      "raw_median_index": 102.86,
+      "official_dld_index": 104.01
+    },
+    {
+      "month": "2021-10-01",
+      "tx_count": 49,
+      "median_ppsqm": 15529.0,
+      "stratified_ppsqm": 17279.2,
+      "computed_index": 106.81,
+      "raw_median_index": 97.89,
+      "official_dld_index": 106.58
+    },
+    {
+      "month": "2021-11-01",
+      "tx_count": 40,
+      "median_ppsqm": 16649.3,
+      "stratified_ppsqm": 16241.9,
+      "computed_index": 100.39,
+      "raw_median_index": 104.95,
+      "official_dld_index": 107.66
+    },
+    {
+      "month": "2021-12-01",
+      "tx_count": 41,
+      "median_ppsqm": 18359.7,
+      "stratified_ppsqm": 17534.9,
+      "computed_index": 108.39,
+      "raw_median_index": 115.73,
+      "official_dld_index": 107.89
+    },
+    {
+      "month": "2022-01-01",
+      "tx_count": 47,
+      "median_ppsqm": 18449.5,
+      "stratified_ppsqm": 17416.4,
+      "computed_index": 107.65,
+      "raw_median_index": 116.3,
+      "official_dld_index": 108.66
+    },
+    {
+      "month": "2022-02-01",
+      "tx_count": 28,
+      "median_ppsqm": 18284.7,
+      "stratified_ppsqm": 18551.1,
+      "computed_index": 114.67,
+      "raw_median_index": 115.26,
+      "official_dld_index": 109.36
+    },
+    {
+      "month": "2022-03-01",
+      "tx_count": 44,
+      "median_ppsqm": 18986.7,
+      "stratified_ppsqm": 18174.0,
+      "computed_index": 112.34,
+      "raw_median_index": 119.68,
+      "official_dld_index": 109.67
+    },
+    {
+      "month": "2022-04-01",
+      "tx_count": 38,
+      "median_ppsqm": 16700.1,
+      "stratified_ppsqm": 17993.9,
+      "computed_index": 111.22,
+      "raw_median_index": 105.27,
+      "official_dld_index": 110.98
+    },
+    {
+      "month": "2022-05-01",
+      "tx_count": 48,
+      "median_ppsqm": 17572.9,
+      "stratified_ppsqm": 18709.0,
+      "computed_index": 115.64,
+      "raw_median_index": 110.77,
+      "official_dld_index": 112.24
+    },
+    {
+      "month": "2022-06-01",
+      "tx_count": 29,
+      "median_ppsqm": 16106.5,
+      "stratified_ppsqm": 18244.8,
+      "computed_index": 112.77,
+      "raw_median_index": 101.53,
+      "official_dld_index": 111.29
+    },
+    {
+      "month": "2022-07-01",
+      "tx_count": 37,
+      "median_ppsqm": 17983.7,
+      "stratified_ppsqm": 17906.2,
+      "computed_index": 110.68,
+      "raw_median_index": 113.36,
+      "official_dld_index": 114.99
+    },
+    {
+      "month": "2022-08-01",
+      "tx_count": 50,
+      "median_ppsqm": 18689.0,
+      "stratified_ppsqm": 18664.8,
+      "computed_index": 115.37,
+      "raw_median_index": 117.81,
+      "official_dld_index": 114.07
+    },
+    {
+      "month": "2022-09-01",
+      "tx_count": 41,
+      "median_ppsqm": 17499.7,
+      "stratified_ppsqm": 18867.4,
+      "computed_index": 116.62,
+      "raw_median_index": 110.31,
+      "official_dld_index": 114.63
+    },
+    {
+      "month": "2022-10-01",
+      "tx_count": 41,
+      "median_ppsqm": 17964.5,
+      "stratified_ppsqm": 18366.2,
+      "computed_index": 113.53,
+      "raw_median_index": 113.24,
+      "official_dld_index": 116.88
+    },
+    {
+      "month": "2022-11-01",
+      "tx_count": 47,
+      "median_ppsqm": 19363.2,
+      "stratified_ppsqm": 18929.9,
+      "computed_index": 117.01,
+      "raw_median_index": 122.06,
+      "official_dld_index": 117.98
+    },
+    {
+      "month": "2022-12-01",
+      "tx_count": 39,
+      "median_ppsqm": 18229.9,
+      "stratified_ppsqm": 18160.1,
+      "computed_index": 112.25,
+      "raw_median_index": 114.91,
+      "official_dld_index": 119.41
+    },
+    {
+      "month": "2023-01-01",
+      "tx_count": 34,
+      "median_ppsqm": 17805.8,
+      "stratified_ppsqm": 19187.1,
+      "computed_index": 118.6,
+      "raw_median_index": 112.24,
+      "official_dld_index": 119.89
+    },
+    {
+      "month": "2023-02-01",
+      "tx_count": 39,
+      "median_ppsqm": 19929.3,
+      "stratified_ppsqm": 19440.2,
+      "computed_index": 120.16,
+      "raw_median_index": 125.63,
+      "official_dld_index": 118.18
+    },
+    {
+      "month": "2023-03-01",
+      "tx_count": 47,
+      "median_ppsqm": 19158.0,
+      "stratified_ppsqm": 19609.2,
+      "computed_index": 121.21,
+      "raw_median_index": 120.76,
+      "official_dld_index": 120.61
+    },
+    {
+      "month": "2023-04-01",
+      "tx_count": 46,
+      "median_ppsqm": 18897.1,
+      "stratified_ppsqm": 18803.3,
+      "computed_index": 116.23,
+      "raw_median_index": 119.12,
+      "official_dld_index": 122.01
+    },
+    {
+      "month": "2023-05-01",
+      "tx_count": 33,
+      "median_ppsqm": 20625.5,
+      "stratified_ppsqm": 20759.1,
+      "computed_index": 128.32,
+      "raw_median_index": 130.01,
+      "official_dld_index": 122.75
+    },
+    {
+      "month": "2023-06-01",
+      "tx_count": 39,
+      "median_ppsqm": 17757.5,
+      "stratified_ppsqm": 18803.6,
+      "computed_index": 116.23,
+      "raw_median_index": 111.94,
+      "official_dld_index": 121.36
+    },
+    {
+      "month": "2023-07-01",
+      "tx_count": 46,
+      "median_ppsqm": 17653.5,
+      "stratified_ppsqm": 18625.2,
+      "computed_index": 115.13,
+      "raw_median_index": 111.28,
+      "official_dld_index": 122.93
+    },
+    {
+      "month": "2023-08-01",
+      "tx_count": 36,
+      "median_ppsqm": 18992.8,
+      "stratified_ppsqm": 20413.1,
+      "computed_index": 126.18,
+      "raw_median_index": 119.72,
+      "official_dld_index": 123.9
+    },
+    {
+      "month": "2023-09-01",
+      "tx_count": 31,
+      "median_ppsqm": 19493.8,
+      "stratified_ppsqm": 20402.2,
+      "computed_index": 126.11,
+      "raw_median_index": 122.88,
+      "official_dld_index": 126.27
+    },
+    {
+      "month": "2023-10-01",
+      "tx_count": 47,
+      "median_ppsqm": 19925.4,
+      "stratified_ppsqm": 20666.7,
+      "computed_index": 127.75,
+      "raw_median_index": 125.6,
+      "official_dld_index": 125.87
+    },
+    {
+      "month": "2023-11-01",
+      "tx_count": 35,
+      "median_ppsqm": 20030.8,
+      "stratified_ppsqm": 21050.1,
+      "computed_index": 130.11,
+      "raw_median_index": 126.27,
+      "official_dld_index": 127.86
+    },
+    {
+      "month": "2023-12-01",
+      "tx_count": 41,
+      "median_ppsqm": 21894.7,
+      "stratified_ppsqm": 20711.9,
+      "computed_index": 128.02,
+      "raw_median_index": 138.01,
+      "official_dld_index": 127.99
+    },
+    {
+      "month": "2024-01-01",
+      "tx_count": 36,
+      "median_ppsqm": 21125.6,
+      "stratified_ppsqm": 20359.4,
+      "computed_index": 125.85,
+      "raw_median_index": 133.17,
+      "official_dld_index": 129.93
+    },
+    {
+      "month": "2024-02-01",
+      "tx_count": 41,
+      "median_ppsqm": 17188.0,
+      "stratified_ppsqm": 20755.6,
+      "computed_index": 128.29,
+      "raw_median_index": 108.35,
+      "official_dld_index": 130.31
+    },
+    {
+      "month": "2024-03-01",
+      "tx_count": 52,
+      "median_ppsqm": 18980.6,
+      "stratified_ppsqm": 21188.5,
+      "computed_index": 130.97,
+      "raw_median_index": 119.65,
+      "official_dld_index": 131.31
+    },
+    {
+      "month": "2024-04-01",
+      "tx_count": 51,
+      "median_ppsqm": 17798.0,
+      "stratified_ppsqm": 21040.5,
+      "computed_index": 130.06,
+      "raw_median_index": 112.19,
+      "official_dld_index": 129.91
+    },
+    {
+      "month": "2024-05-01",
+      "tx_count": 37,
+      "median_ppsqm": 21064.9,
+      "stratified_ppsqm": 21638.5,
+      "computed_index": 133.75,
+      "raw_median_index": 132.78,
+      "official_dld_index": 131.84
+    },
+    {
+      "month": "2024-06-01",
+      "tx_count": 42,
+      "median_ppsqm": 21845.9,
+      "stratified_ppsqm": 21040.2,
+      "computed_index": 130.05,
+      "raw_median_index": 137.71,
+      "official_dld_index": 134.46
+    },
+    {
+      "month": "2024-07-01",
+      "tx_count": 35,
+      "median_ppsqm": 21294.2,
+      "stratified_ppsqm": 22074.1,
+      "computed_index": 136.44,
+      "raw_median_index": 134.23,
+      "official_dld_index": 134.28
+    },
+    {
+      "month": "2024-08-01",
+      "tx_count": 55,
+      "median_ppsqm": 23192.7,
+      "stratified_ppsqm": 22747.9,
+      "computed_index": 140.61,
+      "raw_median_index": 146.2,
+      "official_dld_index": 134.37
+    },
+    {
+      "month": "2024-09-01",
+      "tx_count": 33,
+      "median_ppsqm": 19914.6,
+      "stratified_ppsqm": 22360.2,
+      "computed_index": 138.21,
+      "raw_median_index": 125.53,
+      "official_dld_index": 134.87
+    },
+    {
+      "month": "2024-10-01",
+      "tx_count": 42,
+      "median_ppsqm": 21415.0,
+      "stratified_ppsqm": 21947.2,
+      "computed_index": 135.66,
+      "raw_median_index": 134.99,
+      "official_dld_index": 135.41
+    },
+    {
+      "month": "2024-11-01",
+      "tx_count": 46,
+      "median_ppsqm": 22458.4,
+      "stratified_ppsqm": 22417.9,
+      "computed_index": 138.57,
+      "raw_median_index": 141.57,
+      "official_dld_index": 138.73
+    },
+    {
+      "month": "2024-12-01",
+      "tx_count": 42,
+      "median_ppsqm": 23307.2,
+      "stratified_ppsqm": 23123.3,
+      "computed_index": 142.93,
+      "raw_median_index": 146.92,
+      "official_dld_index": 141.37
+    },
+    {
+      "month": "2025-01-01",
+      "tx_count": 41,
+      "median_ppsqm": 20375.2,
+      "stratified_ppsqm": 22393.0,
+      "computed_index": 138.42,
+      "raw_median_index": 128.44,
+      "official_dld_index": 138.1
+    },
+    {
+      "month": "2025-02-01",
+      "tx_count": 53,
+      "median_ppsqm": 20246.5,
+      "stratified_ppsqm": 20600.6,
+      "computed_index": 127.34,
+      "raw_median_index": 127.63,
+      "official_dld_index": 141.39
+    },
+    {
+      "month": "2025-03-01",
+      "tx_count": 50,
+      "median_ppsqm": 19246.7,
+      "stratified_ppsqm": 22363.1,
+      "computed_index": 138.23,
+      "raw_median_index": 121.32,
+      "official_dld_index": 141.41
+    },
+    {
+      "month": "2025-04-01",
+      "tx_count": 39,
+      "median_ppsqm": 22543.6,
+      "stratified_ppsqm": 23516.4,
+      "computed_index": 145.36,
+      "raw_median_index": 142.11,
+      "official_dld_index": 142.49
+    },
+    {
+      "month": "2025-05-01",
+      "tx_count": 55,
+      "median_ppsqm": 21147.5,
+      "stratified_ppsqm": 22127.1,
+      "computed_index": 136.77,
+      "raw_median_index": 133.3,
+      "official_dld_index": 143.79
+    },
+    {
+      "month": "2025-06-01",
+      "tx_count": 45,
+      "median_ppsqm": 20316.3,
+      "stratified_ppsqm": 23685.9,
+      "computed_index": 146.41,
+      "raw_median_index": 128.07,
+      "official_dld_index": 142.69
+    },
+    {
+      "month": "2025-07-01",
+      "tx_count": 35,
+      "median_ppsqm": 20085.7,
+      "stratified_ppsqm": 21982.3,
+      "computed_index": 135.88,
+      "raw_median_index": 126.61,
+      "official_dld_index": 145.4
+    },
+    {
+      "month": "2025-08-01",
+      "tx_count": 36,
+      "median_ppsqm": 21411.5,
+      "stratified_ppsqm": 22960.8,
+      "computed_index": 141.93,
+      "raw_median_index": 134.97,
+      "official_dld_index": 148.29
+    },
+    {
+      "month": "2025-09-01",
+      "tx_count": 46,
+      "median_ppsqm": 21484.9,
+      "stratified_ppsqm": 23635.9,
+      "computed_index": 146.1,
+      "raw_median_index": 135.43,
+      "official_dld_index": 147.44
+    },
+    {
+      "month": "2025-10-01",
+      "tx_count": 54,
+      "median_ppsqm": 24062.1,
+      "stratified_ppsqm": 23036.0,
+      "computed_index": 142.39,
+      "raw_median_index": 151.68,
+      "official_dld_index": 148.13
+    },
+    {
+      "month": "2025-11-01",
+      "tx_count": 50,
+      "median_ppsqm": 22863.8,
+      "stratified_ppsqm": 23476.2,
+      "computed_index": 145.11,
+      "raw_median_index": 144.12,
+      "official_dld_index": 149.04
+    },
+    {
+      "month": "2025-12-01",
+      "tx_count": 44,
+      "median_ppsqm": 23888.7,
+      "stratified_ppsqm": 22968.7,
+      "computed_index": 141.97,
+      "raw_median_index": 150.58,
+      "official_dld_index": 149.53
+    },
+    {
+      "month": "2026-01-01",
+      "tx_count": 45,
+      "median_ppsqm": 23242.1,
+      "stratified_ppsqm": 22385.7,
+      "computed_index": 138.37,
+      "raw_median_index": 146.51,
+      "official_dld_index": 151.59
+    },
+    {
+      "month": "2026-02-01",
+      "tx_count": 34,
+      "median_ppsqm": 24197.5,
+      "stratified_ppsqm": 24530.4,
+      "computed_index": 151.63,
+      "raw_median_index": 152.53,
+      "official_dld_index": 152.95
+    },
+    {
+      "month": "2026-03-01",
+      "tx_count": 35,
+      "median_ppsqm": 24956.7,
+      "stratified_ppsqm": 24491.0,
+      "computed_index": 151.38,
+      "raw_median_index": 157.32,
+      "official_dld_index": 151.96
+    },
+    {
+      "month": "2026-04-01",
+      "tx_count": 44,
+      "median_ppsqm": 23959.7,
+      "stratified_ppsqm": 23926.7,
+      "computed_index": 147.9,
+      "raw_median_index": 151.03,
+      "official_dld_index": 151.41
+    },
+    {
+      "month": "2026-05-01",
+      "tx_count": 51,
+      "median_ppsqm": 24085.6,
+      "stratified_ppsqm": 24138.5,
+      "computed_index": 149.2,
+      "raw_median_index": 151.83,
+      "official_dld_index": 155.22
+    },
+    {
+      "month": "2026-06-01",
+      "tx_count": 53,
+      "median_ppsqm": 23949.5,
+      "stratified_ppsqm": 24163.6,
+      "computed_index": 149.36,
+      "raw_median_index": 150.97,
+      "official_dld_index": 154.73
+    }
+  ],
+  "events_analysis": [
+    {
+      "event_id": "covid19_restrictions_2020",
+      "title": "COVID-19 Restrictions & National Disinfection Programme",
+      "start_date": "2020-03-26",
+      "end_date": "2020-06-24",
+      "category": "macro_shock",
+      "source_url": "https://u.ae/en/",
+      "its": {
+        "n_months": 25,
+        "level_step_pct": -7.4,
+        "level_step_p_value": 0.0186,
+        "monthly_slope_change_pct": 0.06,
+        "slope_change_p_value": 0.8916
+      },
+      "placebo_minus_6m": {
+        "n_months": 14,
+        "level_step_pct": 1.76,
+        "level_step_p_value": 0.6184,
+        "monthly_slope_change_pct": -1.14,
+        "slope_change_p_value": 0.1189
+      }
+    },
+    {
+      "event_id": "route2020_phase1_opening",
+      "title": "Dubai Metro Route 2020 Phase 1 Opening",
+      "start_date": "2021-01-01",
+      "end_date": "2021-01-01",
+      "category": "infrastructure",
+      "source_url": "https://www.rta.ae/wps/portal/rta/ae/home/about-rta/metro-tram",
+      "its": {
+        "n_months": 25,
+        "level_step_pct": 9.15,
+        "level_step_p_value": 0.0077,
+        "monthly_slope_change_pct": 1.27,
+        "slope_change_p_value": 0.0025
+      },
+      "placebo_minus_6m": {
+        "n_months": 14,
+        "level_step_pct": -8.93,
+        "level_step_p_value": 0.0986,
+        "monthly_slope_change_pct": 0.77,
+        "slope_change_p_value": 0.5541
+      }
+    },
+    {
+      "event_id": "route2020_phase2_opening",
+      "title": "Dubai Metro Route 2020 Phase 2 Opening",
+      "start_date": "2021-06-01",
+      "end_date": "2021-06-01",
+      "category": "infrastructure",
+      "source_url": "https://www.rta.ae/wps/portal/rta/ae/home/about-rta/metro-tram",
+      "its": {
+        "n_months": 25,
+        "level_step_pct": 3.02,
+        "level_step_p_value": 0.3058,
+        "monthly_slope_change_pct": 0.02,
+        "slope_change_p_value": 0.9685
+      },
+      "placebo_minus_6m": {
+        "n_months": 14,
+        "level_step_pct": 11.57,
+        "level_step_p_value": 0.0001,
+        "monthly_slope_change_pct": 1.81,
+        "slope_change_p_value": 0.0193
+      }
+    },
+    {
+      "event_id": "expo_2020_dubai",
+      "title": "Expo 2020 Dubai",
+      "start_date": "2021-10-01",
+      "end_date": "2022-03-31",
+      "category": "global_event",
+      "source_url": "https://www.bie-paris.org/site/en/2020-dubai",
+      "its": {
+        "n_months": 25,
+        "level_step_pct": -4.58,
+        "level_step_p_value": 0.0256,
+        "monthly_slope_change_pct": -0.56,
+        "slope_change_p_value": 0.0389
+      },
+      "placebo_minus_6m": {
+        "n_months": 14,
+        "level_step_pct": -5.67,
+        "level_step_p_value": 0.0006,
+        "monthly_slope_change_pct": -0.21,
+        "slope_change_p_value": 0.6487
+      }
+    },
+    {
+      "event_id": "golden_visa_expansion_2022",
+      "title": "UAE Golden Visa Real Estate Expansion (AED 2M)",
+      "start_date": "2022-10-03",
+      "end_date": "2022-10-03",
+      "category": "policy",
+      "source_url": "https://u.ae/en/information-and-services/visa-and-emirates-id/residence-visas/golden-visa",
+      "its": {
+        "n_months": 25,
+        "level_step_pct": -3.02,
+        "level_step_p_value": 0.0765,
+        "monthly_slope_change_pct": -0.12,
+        "slope_change_p_value": 0.7027
+      },
+      "placebo_minus_6m": {
+        "n_months": 14,
+        "level_step_pct": -0.24,
+        "level_step_p_value": 0.9226,
+        "monthly_slope_change_pct": -0.2,
+        "slope_change_p_value": 0.7217
+      }
+    },
+    {
+      "event_id": "dubai_re_strategy_2033",
+      "title": "Dubai Real Estate Sector Strategy 2033",
+      "start_date": "2024-10-01",
+      "end_date": "2024-10-01",
+      "category": "policy",
+      "source_url": "https://dubailand.gov.ae/en/",
+      "its": {
+        "n_months": 25,
+        "level_step_pct": -1.74,
+        "level_step_p_value": 0.4106,
+        "monthly_slope_change_pct": -0.39,
+        "slope_change_p_value": 0.1157
+      },
+      "placebo_minus_6m": {
+        "n_months": 14,
+        "level_step_pct": 0.14,
+        "level_step_p_value": 0.9259,
+        "monthly_slope_change_pct": 1.1,
+        "slope_change_p_value": 0.0027
+      }
+    }
+  ]
+}
