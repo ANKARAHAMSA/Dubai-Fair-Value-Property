@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import pandas as pd
 import streamlit as st
 
 st.set_page_config(
@@ -24,6 +25,8 @@ mode, data_dir, model_dir, unit = render_sidebar_controls()
 bundle, _ = get_cached_model(mode, str(model_dir))
 tx_df = load_transactions_view(mode, str(data_dir))
 analyses = load_analysis_bundle(mode, str(data_dir))
+rent_path = data_dir / "rent_contracts.parquet"
+n_rents = len(pd.read_parquet(rent_path, columns=["contract_id"])) if rent_path.exists() else 0
 
 st.title("DubaiFairValue")
 st.subheader(
@@ -33,8 +36,8 @@ st.subheader(
 
 if mode == "sample":
     st.info(
-        "**Sample Data Mode active**: running on the lightweight committed CI synthetic bundle "
-        "(`data/sample/`, 5,000 sales + 5,000 rent contracts). Connect processed Dubai Pulse / DLD data "
+        f"**Sample Data Mode active**: running on the lightweight committed CI synthetic bundle "
+        f"(`data/sample/`, {len(tx_df):,} sales + {n_rents:,} rent contracts). Connect processed Dubai Pulse / DLD data "
         "in `data/raw/` and run `make data features train analyze` for full-scale estimates."
     )
 else:
@@ -49,6 +52,9 @@ m_meta = bundle.metadata.get("metrics", {})
 tm = m_meta.get("test_metrics", m_meta)
 recent_med_ppsqm = float(tx_df["price_per_sqm"].median()) if not tx_df.empty else 0.0
 disp_med = ppsqm_to_display(recent_med_ppsqm, unit)
+best_base_lbl = (
+    str(tm.get("best_baseline_name", "baseline")).replace("baseline_", "").replace("_", " ")
+)
 
 c1, c2, c3, c4 = st.columns(4)
 c1.metric("Unflagged Residential Sales", f"{len(tx_df):,}")
@@ -59,7 +65,7 @@ c4.metric(
     f"{float(tm.get('model_mdape', 0.0)) * 100:.2f}%"
     if tm.get("model_mdape") is not None
     else "n/a",
-    delta=f"-{float(tm.get('mdape_improvement_rel_pct', 0.0)):.1f}% vs Ridge baseline"
+    delta=f"-{float(tm.get('mdape_improvement_rel_pct', 0.0)):.1f}% vs {best_base_lbl}"
     if tm.get("mdape_improvement_rel_pct") is not None
     else None,
 )

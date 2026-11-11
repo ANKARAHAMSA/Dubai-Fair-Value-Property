@@ -24,7 +24,8 @@ INJECTION_PATTERNS: tuple[re.Pattern[str], ...] = (
 )
 
 SQL_AREA_REJECT: re.Pattern[str] = re.compile(
-    r"[;'\"]|\b(?:select|drop|union|insert|delete)\b", re.I
+    r"[;\"]|--|/\*|\*/|''|(?<![A-Za-z])'|'(?![A-Za-z])|\b(?:select|drop|union|insert|delete)\b",
+    re.I,
 )
 
 

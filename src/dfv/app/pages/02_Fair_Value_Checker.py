@@ -93,15 +93,25 @@ if submitted or "last_fv_result" not in st.session_state:
             "area_sqm": float(area_sqm),
             "asking_price_aed": float(asking_price),
         }
-    except Exception as exc:
-        st.error(f"Could not compute estimate safely: {exc}")
+    except (ValueError, KeyError) as exc:
+        st.error(f"Invalid property parameters: {exc}")
+        st.stop()
+    except Exception:
+        st.error("Could not compute fair-value estimate safely. Verify inputs and model bundle.")
         st.stop()
 
 res = st.session_state["last_fv_result"]
 ctx = st.session_state["last_fv_ctx"]
+u_lbl = unit_suffix(unit)
+pred_per_unit = ppsqm_to_display(res["estimate"] / max(ctx["area_sqm"], 1.0), unit)
 
 k1, k2, k3, k4 = st.columns(4)
-k1.metric("Predicted Fair Value", f"AED {res['estimate']:,.0f}")
+k1.metric(
+    "Predicted Fair Value",
+    f"AED {res['estimate']:,.0f}",
+    delta=f"AED {pred_per_unit:,.0f} / {u_lbl}",
+    delta_color="off",
+)
 k2.metric("90% Confidence Range", f"AED {res['low']:,.0f} – {res['high']:,.0f}")
 k3.metric("Asking Gap vs Median", f"{res['gap_pct']:+.1f}%")
 k4.metric("Confidence Label", str(res["confidence"]))
@@ -126,10 +136,11 @@ with col_l:
             x=[res["high"] - res["low"]],
             y=["Valuation"],
             base=[res["low"]],
+            customdata=[[res["high"]]],
             orientation="h",
             name="Calibrated 90% Interval",
             marker={"color": "rgba(15, 118, 110, 0.25)"},
-            hovertemplate="90% Range: AED %{base:,.0f} - %{x:,.0f}<extra></extra>",
+            hovertemplate="90% Range: AED %{base:,.0f} - %{customdata[0]:,.0f}<extra></extra>",
         )
     )
     fig_rng.add_trace(

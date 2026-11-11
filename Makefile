@@ -1,4 +1,4 @@
-.PHONY: setup data features train analyze api app lint test verify report clean
+.PHONY: setup data features train analyze api app lint test verify report render clean
 
 UV := uv
 PY := $(UV) run python
@@ -39,6 +39,9 @@ verify:
 
 report:
 	$(PY) -m dfv.verify --report-only
+
+render:
+	$(PY) -m dfv.report_render
 
 clean:
 	rm -rf .pytest_cache .mypy_cache .ruff_cache htmlcov .coverage coverage.xml

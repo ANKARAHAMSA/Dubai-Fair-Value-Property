@@ -36,7 +36,7 @@ def compute_verdict(
     low: float,
     high: float,
     segment_tx_count: int = 50,
-    min_segment_samples: int = 5,
+    min_segment_samples: int = 15,
 ) -> VerdictResult:
     """Evaluate asking price P against calibrated interval [L, U] and median M.
 
@@ -74,25 +74,35 @@ def compute_verdict(
 
     if rel_width <= 0.35 and segment_tx_count >= 25:
         confidence = "High"
-    elif rel_width <= 0.55 and segment_tx_count >= 10:
+    elif rel_width <= 0.55 and segment_tx_count >= 15:
         confidence = "Medium"
     else:
         confidence = "Low"
+
+    conf_note = ""
+    if confidence == "Low":
+        if rel_width > 0.55:
+            conf_note = " (Low confidence due to wide 90% uncertainty band relative to median.)"
+        else:
+            conf_note = " (Low confidence due to limited comparable volume.)"
 
     if asking_price < low_c:
         verdict = "Underpriced"
         reason = (
             f"Asking price is {abs(gap_pct):.1f}% below estimated fair value and below the "
-            f"calibrated 90% lower bound."
+            f"calibrated 90% lower bound.{conf_note}"
         )
     elif asking_price <= high_c:
         verdict = "Fair"
-        reason = f"Asking price sits within the calibrated 90% fair-value range ({gap_pct:+.1f}% vs median)."
+        reason = (
+            f"Asking price sits within the calibrated 90% fair-value range ({gap_pct:+.1f}% vs median)."
+            f"{conf_note}"
+        )
     else:
         verdict = "Overpriced"
         reason = (
             f"Asking price is {gap_pct:.1f}% above estimated fair value and exceeds the "
-            f"calibrated 90% upper bound."
+            f"calibrated 90% upper bound.{conf_note}"
         )
 
     return VerdictResult(

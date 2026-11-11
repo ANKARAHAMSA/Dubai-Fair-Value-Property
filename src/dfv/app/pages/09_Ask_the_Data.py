@@ -115,4 +115,10 @@ else:
         res_df[f"price_per_{u_lbl}_aed"] = res_df["price_per_sqm"].map(
             lambda v: round(ppsqm_to_display(v, unit), 0)
         )
+    if unit == "sqft":
+        res_df = res_df.drop(
+            columns=[c for c in ("area_sqm", "price_per_sqm") if c in res_df.columns]
+        )
+    elif "price_per_sqm" in res_df.columns and "price_per_sqm_aed" in res_df.columns:
+        res_df = res_df.drop(columns=["price_per_sqm"])
     st.dataframe(res_df, width="stretch", hide_index=True)

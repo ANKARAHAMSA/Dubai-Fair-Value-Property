@@ -83,15 +83,15 @@ All upstream column names are normalized to `snake_case` via the adapter layer.
 ## Table: `metro_stations_raw`
 
 - **Source**: `unofficial_mobilitydatabase_gtfs (mdb-904)`
-- **Rows**: `55` | **Columns**: `7`
+- **Rows**: `53` | **Columns**: `7`
 
 | Column | Dtype | Null % | Min | Max | Example Values |
 | --- | --- | --- | --- | --- | --- |
-| `station_name` | `str` | 0.0% | `ADCB` | `World Trade Centre` | ADCB, Abu Baker Al Siddique, Abu Hail |
+| `station_name` | `str` | 0.0% | `ADCB` | `e&` | ADCB, Abu Baker Al Siddique, Abu Hail |
 | `lat` | `float64` | 0.0% | `24.96` | `25.28` | 25.24476136728795, 25.270885629782548, 25.275317383272 |
 | `lon` | `float64` | 0.0% | `55.09` | `55.4` | 55.2982809418214, 55.332846872977754, 55.346378886791854 |
-| `line` | `str` | 0.0% | `Green` | `Red/Green` | Red, Red/Green, Red/Green |
-| `opening_date` | `str` | 45.5% | `2009-09-09` | `2021-06-01` | 2010-04-30, 2010-04-30, 2009-09-09 |
+| `line` | `str` | 0.0% | `Green` | `Red/Green` | Red, Green, Green |
+| `opening_date` | `str` | 0.0% | `2009-09-09` | `2021-06-01` | 2010-04-30, 2011-09-09, 2011-09-09 |
 | `is_route_2020` | `bool` | 0.0% | `0` | `1` | False, False, False |
 | `data_source` | `str` | 0.0% | `unofficial_mobilitydatab` | `unofficial_mobilitydatab` | unofficial_mobilitydatab, unofficial_mobilitydatab, unofficial_mobilitydatab |
 

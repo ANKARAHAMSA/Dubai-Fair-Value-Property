@@ -8,6 +8,8 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
+import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -170,138 +172,297 @@ def measure_api_predict_latency_ms(paths: Paths) -> float | None:
         return None
 
 
-def run_verification(report_only: bool = False, paths: Paths = PATHS) -> int:
+def _tool_cmd(tool: str, *args: str) -> list[str]:
+    """Resolve CLI executable inside active Python venv (without requiring global `uv` on PATH)."""
+    cand = Path(sys.executable).parent / tool
+    if cand.exists():
+        return [str(cand), *args]
+    if tool in {"pytest", "mypy", "ruff"}:
+        return [sys.executable, "-m", tool, *args]
+    return ["uv", "run", tool, *args]
+
+
+def _summarize_junit_suite(xml_path: Path, classname_prefix: str) -> tuple[bool, int, int] | None:
+    """Parse JUnit XML counts for a suite prefix; return (passed, total, failed_or_skipped) or None."""
+    if not xml_path.exists():
+        return None
+    try:
+        tree = ET.parse(xml_path)
+    except ET.ParseError:
+        return None
+    total = 0
+    bad = 0
+    for tc in tree.getroot().iter("testcase"):
+        cls = str(tc.attrib.get("classname", ""))
+        if cls.startswith(classname_prefix):
+            total += 1
+            if (
+                tc.find("failure") is not None
+                or tc.find("error") is not None
+                or tc.find("skipped") is not None
+            ):
+                bad += 1
+    return (total > 0 and bad == 0, total, bad)
+
+
+def _is_processed_mode(paths: Paths) -> bool:
+    mode_override = os.getenv("DFV_DATA_MODE", "auto").strip().lower()
+    if mode_override == "sample":
+        return False
+    has_proc_model = (paths.models / "metadata.json").exists()
+    has_proc_data = (paths.processed / "features.parquet").exists()
+    has_proc_metrics = (paths.reports / "metrics.json").exists()
+    if mode_override == "processed":
+        return has_proc_model and has_proc_data
+    return has_proc_model and has_proc_data and has_proc_metrics
+
+
+def run_verification(
+    report_only: bool = False,
+    paths: Paths = PATHS,
+    report_path: Path | None = None,
+) -> int:
     """Run verification gates and write reports/VERIFICATION_REPORT.md."""
     root = paths.root
     paths.reports.mkdir(parents=True, exist_ok=True)
     checks: list[CheckResult] = []
+    running_processed = _is_processed_mode(paths)
 
-    if not report_only:
-        # 1. Lint & static typing
-        rc_ruff, out_ruff = run_command(["uv", "run", "ruff", "check", "src", "tests"], root)
-        rc_fmt, out_fmt = run_command(
-            ["uv", "run", "ruff", "format", "--check", "src", "tests"], root
-        )
-        rc_mypy, out_mypy = run_command(["uv", "run", "mypy", "src/dfv"], root)
-        if rc_ruff == 0 and rc_fmt == 0 and rc_mypy == 0:
-            checks.append(CheckResult("Lint & mypy", "PASS", "ruff check/format and mypy passed"))
+    junit_dir: tempfile.TemporaryDirectory[str] | None = None
+    junit_xml: Path | None = None
+    has_junit = False
+
+    try:
+        if not report_only:
+            # 1. Lint & static typing
+            rc_ruff, out_ruff = run_command(_tool_cmd("ruff", "check", "src", "tests"), root)
+            rc_fmt, out_fmt = run_command(
+                _tool_cmd("ruff", "format", "--check", "src", "tests"), root
+            )
+            rc_mypy, out_mypy = run_command(_tool_cmd("mypy", "src/dfv"), root)
+            if rc_ruff == 0 and rc_fmt == 0 and rc_mypy == 0:
+                checks.append(
+                    CheckResult("Lint & mypy", "PASS", "ruff check/format and mypy passed")
+                )
+            else:
+                detail = (out_ruff + "\n" + out_fmt + "\n" + out_mypy).strip().splitlines()[-1]
+                checks.append(CheckResult("Lint & mypy", "FAIL", detail))
+
+            # 2. Secrets & .env check
+            checks.append(check_secrets_and_gitignore(root))
+
+            # 3. Single-pass full pytest + coverage (>= 80%) + JUnit XML for sub-suite verification
+            junit_dir = tempfile.TemporaryDirectory()
+            junit_xml = Path(junit_dir.name) / "junit.xml"
+            rc_test, out_test = run_command(
+                _tool_cmd(
+                    "pytest",
+                    "--cov=src/dfv",
+                    "--cov-report=term-missing",
+                    f"--junitxml={junit_xml}",
+                ),
+                root,
+            )
+            has_junit = junit_xml.exists()
+            test_count, cov_pct = parse_pytest_summary(out_test)
+            if rc_test == 0:
+                checks.append(
+                    CheckResult(
+                        "Pytest & coverage", "PASS", f"{test_count} passed, coverage {cov_pct}"
+                    )
+                )
+            else:
+                tail = "\n".join(out_test.strip().splitlines()[-8:])
+                checks.append(CheckResult("Pytest & coverage", "FAIL", tail))
         else:
-            detail = (out_ruff + "\n" + out_fmt + "\n" + out_mypy).strip().splitlines()[-1]
-            checks.append(CheckResult("Lint & mypy", "FAIL", detail))
+            test_count = "cached"
+            cov_pct = "cached"
+            checks.append(check_secrets_and_gitignore(root))
 
-        # 2. Secrets & .env check
-        checks.append(check_secrets_and_gitignore(root))
-
-        # 3. Full pytest + coverage (>= 80%)
-        rc_test, out_test = run_command(
-            ["uv", "run", "pytest", "--cov=src/dfv", "--cov-report=term-missing"], root
-        )
-        test_count, cov_pct = parse_pytest_summary(out_test)
-        if rc_test == 0:
+        # 4. Data contracts check (read from single pytest pass if available, else targeted run)
+        if (root / "src" / "dfv" / "data" / "validate.py").exists():
+            suite_res = (
+                _summarize_junit_suite(junit_xml, "tests.data_contracts.")
+                if junit_xml and has_junit
+                else None
+            )
+            if suite_res is not None:
+                ok_dc, tot_dc, bad_dc = suite_res
+                checks.append(
+                    CheckResult(
+                        "Data contracts (Pandera)",
+                        "PASS" if ok_dc else "FAIL",
+                        f"Contracts passed ({tot_dc} checks)"
+                        if ok_dc
+                        else f"Contracts failed ({bad_dc}/{tot_dc})",
+                    )
+                )
+            else:
+                rc_val, out_val = run_command(
+                    _tool_cmd("pytest", "tests/data_contracts", "-q"), root
+                )
+                checks.append(
+                    CheckResult(
+                        "Data contracts (Pandera)",
+                        "PASS" if rc_val == 0 else "FAIL",
+                        "Contracts passed" if rc_val == 0 else out_val.strip()[-200:],
+                    )
+                )
+        else:
             checks.append(
-                CheckResult("Pytest & coverage", "PASS", f"{test_count} passed, coverage {cov_pct}")
+                CheckResult("Data contracts (Pandera)", "SKIPPED", "Scheduled for Phase 1")
+            )
+
+        # 5. Model acceptance gates (processed -> reports/metrics.json; sample -> data/sample/models/metadata.json)
+        metrics_path = paths.reports / "metrics.json"
+        metrics_data: dict = {}
+        active_tm: dict = {}
+        if running_processed and metrics_path.exists():
+            metrics_data = json.loads(metrics_path.read_text(encoding="utf-8"))
+            gates = metrics_data.get("gates", {})
+            active_tm = metrics_data.get("test_metrics", {})
+            all_ok = bool(gates.get("all_passed", False))
+            mdape = active_tm.get("model_mdape", "n/a")
+            base_mdape = active_tm.get("best_baseline_mdape", "n/a")
+            cov = active_tm.get("interval_coverage", "n/a")
+            checks.append(
+                CheckResult(
+                    "Model acceptance gates",
+                    "PASS" if all_ok else "FAIL",
+                    f"Model MdAPE={mdape}, Best baseline MdAPE={base_mdape}, 90% coverage={cov}",
+                )
+            )
+        elif (paths.sample_models / "metadata.json").exists():
+            s_meta = json.loads((paths.sample_models / "metadata.json").read_text(encoding="utf-8"))
+            active_tm = dict(s_meta.get("metrics", {}))
+            mdape_v = active_tm.get("model_mdape")
+            base_v = active_tm.get("best_baseline_mdape")
+            cov_v = active_tm.get("interval_coverage")
+            repro_v = float(active_tm.get("repro_max_log_diff", 0.0))
+            all_ok = bool(
+                mdape_v is not None
+                and base_v is not None
+                and cov_v is not None
+                and float(mdape_v) < float(base_v)
+                and abs(float(cov_v) - 0.90) <= 0.05
+                and repro_v < 1e-6
+            )
+            checks.append(
+                CheckResult(
+                    "Model acceptance gates",
+                    "PASS" if all_ok else "FAIL",
+                    f"[sample] Model MdAPE={mdape_v}, Best baseline MdAPE={base_v}, 90% coverage={cov_v}",
+                )
             )
         else:
-            tail = "\n".join(out_test.strip().splitlines()[-8:])
-            checks.append(CheckResult("Pytest & coverage", "FAIL", tail))
-    else:
-        test_count = "cached"
-        cov_pct = "cached"
-        checks.append(check_secrets_and_gitignore(root))
+            checks.append(CheckResult("Model acceptance gates", "SKIPPED", "Scheduled for Phase 3"))
 
-    # 4. Phase-gated modules (active once built)
-    metrics_path = paths.reports / "metrics.json"
-    metrics_data: dict = {}
-    if metrics_path.exists():
-        metrics_data = json.loads(metrics_path.read_text(encoding="utf-8"))
-
-    # Data contracts check
-    if (root / "src" / "dfv" / "data" / "validate.py").exists():
-        rc_val, out_val = run_command(["uv", "run", "pytest", "tests/data_contracts", "-q"], root)
-        checks.append(
-            CheckResult(
-                "Data contracts (Pandera)",
-                "PASS" if rc_val == 0 else "FAIL",
-                "Contracts passed" if rc_val == 0 else out_val.strip()[-200:],
+        # 6. API contract & latency tests (only persist latency into processed reports/metrics.json in processed mode)
+        if (root / "src" / "dfv" / "api" / "main.py").exists():
+            suite_res = (
+                _summarize_junit_suite(junit_xml, "tests.api.") if junit_xml and has_junit else None
             )
-        )
-    else:
-        checks.append(CheckResult("Data contracts (Pandera)", "SKIPPED", "Scheduled for Phase 1"))
-
-    # Model gates check
-    if metrics_data and "gates" in metrics_data:
-        gates = metrics_data["gates"]
-        all_ok = bool(gates.get("all_passed", False))
-        mdape = metrics_data.get("test_metrics", {}).get("model_mdape", "n/a")
-        base_mdape = metrics_data.get("test_metrics", {}).get("best_baseline_mdape", "n/a")
-        cov = metrics_data.get("test_metrics", {}).get("interval_coverage", "n/a")
-        checks.append(
-            CheckResult(
-                "Model acceptance gates",
-                "PASS" if all_ok else "FAIL",
-                f"Model MdAPE={mdape}, Best baseline MdAPE={base_mdape}, 90% coverage={cov}",
-            )
-        )
-    else:
-        checks.append(CheckResult("Model acceptance gates", "SKIPPED", "Scheduled for Phase 3"))
-
-    # API contract tests
-    if (root / "src" / "dfv" / "api" / "main.py").exists():
-        rc_api, out_api = run_command(["uv", "run", "pytest", "tests/api", "-q"], root)
-        latency_ms: float | None = None
-        if rc_api == 0 and not report_only:
-            latency_ms = measure_api_predict_latency_ms(paths)
-            if latency_ms is not None and metrics_data:
-                metrics_data["api_predict_latency_ms"] = latency_ms
-                if metrics_path.exists():
+            if suite_res is not None:
+                rc_api = 0 if suite_res[0] else 1
+                out_api = f"API suite failures: {suite_res[2]}/{suite_res[1]}"
+            else:
+                rc_api, out_api = run_command(_tool_cmd("pytest", "tests/api", "-q"), root)
+            latency_ms: float | None = None
+            if rc_api == 0 and not report_only:
+                latency_ms = measure_api_predict_latency_ms(paths)
+                if (
+                    latency_ms is not None
+                    and running_processed
+                    and metrics_data
+                    and metrics_path.exists()
+                    and "api_predict_latency_ms" not in metrics_data
+                ):
+                    metrics_data["api_predict_latency_ms"] = latency_ms
                     metrics_path.write_text(json.dumps(metrics_data, indent=2), encoding="utf-8")
-        lat_ok = latency_ms is None or latency_ms < 500.0
-        api_ok = rc_api == 0 and lat_ok
-        detail = (
-            f"API tests passed (warm /predict median={latency_ms} ms)"
-            if api_ok and latency_ms is not None
-            else ("API tests passed" if api_ok else out_api.strip()[-200:])
-        )
-        checks.append(
-            CheckResult(
-                "API contract & latency tests",
-                "PASS" if api_ok else "FAIL",
-                detail,
+            lat_ok = latency_ms is None or latency_ms < 500.0
+            api_ok = rc_api == 0 and lat_ok
+            detail = (
+                f"API tests passed (warm /predict median={latency_ms} ms)"
+                if api_ok and latency_ms is not None
+                else ("API tests passed" if api_ok else out_api.strip()[-200:])
             )
-        )
-    else:
-        checks.append(
-            CheckResult("API contract & latency tests", "SKIPPED", "Scheduled for Phase 5")
-        )
+            checks.append(
+                CheckResult(
+                    "API contract & latency tests",
+                    "PASS" if api_ok else "FAIL",
+                    detail,
+                )
+            )
+        else:
+            checks.append(
+                CheckResult("API contract & latency tests", "SKIPPED", "Scheduled for Phase 5")
+            )
 
-    # App smoke tests
-    if (root / "src" / "dfv" / "app" / "Home.py").exists():
-        rc_app, out_app = run_command(["uv", "run", "pytest", "tests/app", "-q"], root)
-        checks.append(
-            CheckResult(
-                "Streamlit app smoke tests",
-                "PASS" if rc_app == 0 else "FAIL",
-                "App smoke tests passed" if rc_app == 0 else out_app.strip()[-200:],
+        # 7. App smoke tests (reuse JUnit pass when available)
+        if (root / "src" / "dfv" / "app" / "Home.py").exists():
+            suite_res = (
+                _summarize_junit_suite(junit_xml, "tests.app.") if junit_xml and has_junit else None
             )
-        )
-    else:
-        checks.append(CheckResult("Streamlit app smoke tests", "SKIPPED", "Scheduled for Phase 6"))
+            if suite_res is not None:
+                ok_app, tot_app, bad_app = suite_res
+                checks.append(
+                    CheckResult(
+                        "Streamlit app smoke tests",
+                        "PASS" if ok_app else "FAIL",
+                        f"App smoke tests passed ({tot_app} tests)"
+                        if ok_app
+                        else f"App tests failed ({bad_app}/{tot_app})",
+                    )
+                )
+            else:
+                rc_app, out_app = run_command(_tool_cmd("pytest", "tests/app", "-q"), root)
+                checks.append(
+                    CheckResult(
+                        "Streamlit app smoke tests",
+                        "PASS" if rc_app == 0 else "FAIL",
+                        "App smoke tests passed" if rc_app == 0 else out_app.strip()[-200:],
+                    )
+                )
+        else:
+            checks.append(
+                CheckResult("Streamlit app smoke tests", "SKIPPED", "Scheduled for Phase 6")
+            )
 
-    # Notebook execution check
-    nbs = sorted(paths.notebooks.glob("*.ipynb"))
-    if nbs:
-        rc_nb, out_nb = run_command(
-            ["uv", "run", "pytest", "tests/integration", "-k", "notebook", "-q"], root
-        )
-        checks.append(
-            CheckResult(
-                "Notebook execution",
-                "PASS" if rc_nb == 0 else "FAIL",
-                f"{len(nbs)} notebooks executed" if rc_nb == 0 else out_nb.strip()[-200:],
+        # 8. Notebook execution check (reuse JUnit pass when available)
+        nbs = sorted(paths.notebooks.glob("*.ipynb"))
+        if nbs:
+            suite_res = (
+                _summarize_junit_suite(junit_xml, "tests.integration.test_notebooks")
+                if junit_xml and has_junit
+                else None
             )
-        )
-    else:
-        checks.append(CheckResult("Notebook execution", "SKIPPED", "Scheduled for Phase 4"))
+            if suite_res is not None:
+                ok_nb, tot_nb, bad_nb = suite_res
+                checks.append(
+                    CheckResult(
+                        "Notebook execution",
+                        "PASS" if ok_nb and tot_nb >= len(nbs) else "FAIL",
+                        f"{tot_nb} notebooks executed"
+                        if ok_nb
+                        else f"Notebooks failed ({bad_nb}/{tot_nb})",
+                    )
+                )
+            else:
+                rc_nb, out_nb = run_command(
+                    _tool_cmd("pytest", "tests/integration", "-k", "notebook", "-q"), root
+                )
+                checks.append(
+                    CheckResult(
+                        "Notebook execution",
+                        "PASS" if rc_nb == 0 else "FAIL",
+                        f"{len(nbs)} notebooks executed" if rc_nb == 0 else out_nb.strip()[-200:],
+                    )
+                )
+        else:
+            checks.append(CheckResult("Notebook execution", "SKIPPED", "Scheduled for Phase 4"))
+    finally:
+        if junit_dir is not None:
+            junit_dir.cleanup()
 
     # Compose markdown report
     now_iso = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -309,11 +470,13 @@ def run_verification(report_only: bool = False, paths: Paths = PATHS) -> int:
     manifest_h = _manifest_hash(paths.raw)
     has_fail = any(c.status == "FAIL" for c in checks)
     skipped = [c for c in checks if c.status == "SKIPPED"]
+    mode_tag = "processed" if running_processed else "sample"
 
     lines = [
         "# DubaiFairValue Verification Report",
         "",
         f"- **Timestamp (UTC)**: `{now_iso}`",
+        f"- **Data Mode**: `{mode_tag}`",
         f"- **Git SHA**: `{sha}`",
         f"- **Data Manifest Hash**: `{manifest_h}`",
         f"- **Test Count**: `{test_count}`",
@@ -330,15 +493,23 @@ def run_verification(report_only: bool = False, paths: Paths = PATHS) -> int:
         lines.append(f"| {chk.name} | **{chk.status}** | {safe_detail} |")
 
     lines.extend(["", "## Measured Model & System Metrics", ""])
-    if metrics_data:
-        tm = metrics_data.get("test_metrics", {})
+    if active_tm:
+        disp_lat = (
+            latency_ms
+            if latency_ms is not None
+            else (
+                metrics_data.get("api_predict_latency_ms")
+                if running_processed and metrics_data
+                else None
+            )
+        )
         lines.extend(
             [
-                f"- Model MdAPE: `{tm.get('model_mdape', 'n/a')}`",
-                f"- Best Baseline MdAPE: `{tm.get('best_baseline_mdape', 'n/a')}`",
-                f"- Nominal 90% Interval Coverage: `{tm.get('interval_coverage', 'n/a')}`",
-                f"- Spatial Hold-out MdAPE: `{tm.get('spatial_mdape', 'n/a')}`",
-                f"- API `/predict` Warm Latency (ms): `{metrics_data.get('api_predict_latency_ms', 'n/a')}`",
+                f"- Model MdAPE: `{active_tm.get('model_mdape', 'n/a')}`",
+                f"- Best Baseline MdAPE: `{active_tm.get('best_baseline_mdape', 'n/a')}`",
+                f"- Nominal 90% Interval Coverage: `{active_tm.get('interval_coverage', 'n/a')}`",
+                f"- Spatial Hold-out MdAPE: `{active_tm.get('spatial_mdape', 'n/a')}`",
+                f"- API `/predict` Warm Latency (ms): `{disp_lat if disp_lat is not None else 'n/a'}`",
             ]
         )
     else:
@@ -351,9 +522,10 @@ def run_verification(report_only: bool = False, paths: Paths = PATHS) -> int:
     else:
         lines.append("- None (all checks active and evaluated).")
 
-    report_path = paths.reports / "VERIFICATION_REPORT.md"
-    report_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    print(f"Wrote {report_path} (status={'FAIL' if has_fail else 'PASS'})")
+    out_report_path = report_path or (paths.reports / "VERIFICATION_REPORT.md")
+    out_report_path.parent.mkdir(parents=True, exist_ok=True)
+    out_report_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print(f"Wrote {out_report_path} (status={'FAIL' if has_fail else 'PASS'})")
     return 1 if has_fail else 0
 
 
@@ -362,10 +534,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--report-only", action="store_true", help="Write report without rerunning slow checks."
     )
+    parser.add_argument(
+        "--output-report",
+        type=Path,
+        default=None,
+        help="Optional override output path for VERIFICATION_REPORT.md.",
+    )
     args = parser.parse_args(argv)
     # Ensure CI / non-interactive env doesn't leak local secrets
     os.environ.setdefault("PYTHONUTF8", "1")
-    return run_verification(report_only=args.report_only)
+    return run_verification(report_only=args.report_only, report_path=args.output_report)
 
 
 if __name__ == "__main__":

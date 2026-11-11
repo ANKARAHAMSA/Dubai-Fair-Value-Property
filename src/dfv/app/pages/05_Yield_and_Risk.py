@@ -66,11 +66,25 @@ with col_b:
 
 if seg_list:
     seg_df = pd.DataFrame(seg_list)
+    hm_types = [t for t in ("Unit", "Villa") if t in seg_df["property_type"].unique()]
+    if hm_types:
+        sel_hm_type = st.radio(
+            "Heatmap Property Type",
+            options=hm_types,
+            index=0,
+            horizontal=True,
+            key="yield_hm_type",
+        )
+        seg_hm = seg_df.loc[seg_df["property_type"] == sel_hm_type]
+    else:
+        sel_hm_type = "All"
+        seg_hm = seg_df
+
     top_areas_hm = area_df["area_name"].head(12).tolist()
     hm_piv = (
-        seg_df.loc[seg_df["area_name"].isin(top_areas_hm) & (seg_df["rooms"] <= 4)]
+        seg_hm.loc[seg_hm["area_name"].isin(top_areas_hm) & (seg_hm["rooms"] <= 4)]
         .groupby(["area_name", "rooms"], as_index=False)["gross_yield_pct"]
-        .mean()
+        .median()
         .pivot(index="area_name", columns="rooms", values="gross_yield_pct")
     )
     if not hm_piv.empty:
@@ -78,7 +92,7 @@ if seg_list:
             hm_piv,
             text_auto=".1f",
             aspect="auto",
-            title="Gross Yield (%) Heatmap by Community & Bedrooms (Top 12 Areas)",
+            title=f"Gross Yield (%) Heatmap — {sel_hm_type}s by Community & Bedrooms (Top 12 Areas)",
             labels={"x": "Bedrooms (0=Studio)", "y": "Community", "color": "Gross Yield %"},
             color_continuous_scale="YlGnBu",
         )

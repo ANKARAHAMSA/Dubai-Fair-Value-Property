@@ -2,13 +2,16 @@
 
 from __future__ import annotations
 
+import json
 import os
 
+import httpx
 import pytest
+from pydantic import ValidationError
 
-from dfv.search.llm import parse_query_nl
+from dfv.search.llm import _default_http_llm, parse_query_nl
 from dfv.search.rules import parse_query_rules
-from dfv.search.schema import SearchGuardrailError, summarize_filters
+from dfv.search.schema import PropertyFilters, SearchGuardrailError, summarize_filters
 
 SAMPLE_AREAS = [
     "Downtown Dubai",
@@ -17,6 +20,7 @@ SAMPLE_AREAS = [
     "Business Bay",
     "Palm Jumeirah",
     "Al Furjan",
+    "Me'Aisem First",
 ]
 
 
@@ -140,3 +144,110 @@ def test_prompt_injection_rejected_without_calling_llm(bad_query: str) -> None:
         assert called is False
     finally:
         os.environ.pop("LLM_API_KEY", None)
+
+
+def test_rules_size_vs_price_and_apostrophe_community_names() -> None:
+    # "Me'Aisem First" apostrophe must pass schema & extractor cleanly
+    f_ap = parse_query_rules("2 bed apartment in Me'Aisem First under 1.5M", SAMPLE_AREAS)
+    assert f_ap.areas == ["Me'Aisem First"]
+    assert f_ap.max_price_aed == 1_500_000.0
+
+    # SQL injection attempt using single quote must still fail validator
+    with pytest.raises(ValidationError):
+        PropertyFilters(areas=["Marina' OR '1'='1"])
+
+    # Size bounds must never pollute max_price_aed; sqft converts to sqm
+    f_sqm = parse_query_rules("1 bed in Dubai Marina under 100 sqm", SAMPLE_AREAS)
+    assert f_sqm.max_area_sqm == 100.0
+    assert f_sqm.max_price_aed is None
+
+    f_sqft = parse_query_rules("2 bed apartment over 1000 sqft under 1500 sq ft", SAMPLE_AREAS)
+    assert f_sqft.max_price_aed is None
+    assert f_sqft.min_price_aed is None
+    assert f_sqft.min_area_sqm == 92.9
+    assert f_sqft.max_area_sqm == 139.4
+
+    f_under_sqft = parse_query_rules("apartment under 1000 sqft in Dubai Marina", SAMPLE_AREAS)
+    assert f_under_sqft.max_area_sqm == 92.9
+    assert f_under_sqft.max_price_aed is None
+
+    # Ambiguous bare small number without price cue must NOT become 50M AED
+    f_bare = parse_query_rules("apartment in Business Bay under 50", SAMPLE_AREAS)
+    assert f_bare.max_price_aed is None
+
+
+def test_default_http_llm_anthropic_and_openai_mock_transport(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def _mock_transport(request: httpx.Request) -> httpx.Response:
+        if "api.anthropic.com" in str(request.url):
+            assert request.headers.get("x-api-key") == "dummy-ant-key"
+            body = {
+                "content": [
+                    {
+                        "text": json.dumps(
+                            {
+                                "rooms": 2,
+                                "property_type": "Unit",
+                                "areas": ["Dubai Marina"],
+                                "max_price_aed": 2_000_000,
+                            }
+                        )
+                    }
+                ]
+            }
+            return httpx.Response(200, json=body)
+        if "api.openai.com" in str(request.url):
+            assert request.headers.get("authorization") == "Bearer dummy-oai-key"
+            body = {
+                "choices": [
+                    {
+                        "message": {
+                            "content": json.dumps(
+                                {
+                                    "rooms": 3,
+                                    "property_type": "Villa",
+                                    "areas": ["Palm Jumeirah"],
+                                    "max_price_aed": 8_000_000,
+                                }
+                            )
+                        }
+                    }
+                ]
+            }
+            return httpx.Response(200, json=body)
+        return httpx.Response(404)
+
+    real_client = httpx.Client
+    transport = httpx.MockTransport(_mock_transport)
+    monkeypatch.setattr(
+        "dfv.search.llm.httpx.Client", lambda **_kw: real_client(transport=transport)
+    )
+
+    out_ant = _default_http_llm(
+        "sys",
+        "<user_query>test</user_query>",
+        "dummy-ant-key",
+        "anthropic",
+        "claude-3-5-sonnet-latest",
+    )
+    assert "Dubai Marina" in out_ant
+
+    monkeypatch.setenv("LLM_API_KEY", "dummy-oai-key")
+    monkeypatch.setenv("LLM_PROVIDER", "openai")
+    monkeypatch.setenv("LLM_MODEL", "gpt-4o-mini")
+    filters, used_llm, note = parse_query_nl(
+        "3 bed villa in Palm Jumeirah under 8M", known_areas=SAMPLE_AREAS
+    )
+    assert used_llm is True
+    assert note == "llm:openai"
+    assert filters.rooms == 3
+    assert filters.areas == ["Palm Jumeirah"]
+
+    # Empty content payload raises ValueError
+    empty_transport = httpx.MockTransport(lambda _req: httpx.Response(200, json={"content": []}))
+    monkeypatch.setattr(
+        "dfv.search.llm.httpx.Client", lambda **_kw: real_client(transport=empty_transport)
+    )
+    with pytest.raises(ValueError, match="Empty Anthropic"):
+        _default_http_llm("sys", "usr", "k", "anthropic", "m")

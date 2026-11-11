@@ -37,15 +37,22 @@ def assert_temporal_split_valid(
     test_df: pd.DataFrame,
     date_col: str = "instance_date",
     id_col: str = "transaction_id",
+    cal_df: pd.DataFrame | None = None,
 ) -> None:
-    """Assert strict chronological ordering and disjoint row IDs across train/val/test."""
+    """Assert strict chronological ordering and disjoint row IDs across train/val/(cal)/test."""
     tr_dt = pd.to_datetime(train_df[date_col])
     va_dt = pd.to_datetime(val_df[date_col])
     te_dt = pd.to_datetime(test_df[date_col])
 
     if not (tr_dt.max() < va_dt.min()):
         raise AssertionError(f"Temporal overlap train->val: {tr_dt.max()} >= {va_dt.min()}")
-    if not (va_dt.max() < te_dt.min()):
+    if cal_df is not None:
+        cal_dt = pd.to_datetime(cal_df[date_col])
+        if not (va_dt.max() < cal_dt.min()):
+            raise AssertionError(f"Temporal overlap val->cal: {va_dt.max()} >= {cal_dt.min()}")
+        if not (cal_dt.max() < te_dt.min()):
+            raise AssertionError(f"Temporal overlap cal->test: {cal_dt.max()} >= {te_dt.min()}")
+    elif not (va_dt.max() < te_dt.min()):
         raise AssertionError(f"Temporal overlap val->test: {va_dt.max()} >= {te_dt.min()}")
 
     if id_col in train_df.columns:
@@ -54,6 +61,10 @@ def assert_temporal_split_valid(
         s_te = set(test_df[id_col])
         if s_tr & s_va or s_va & s_te or s_tr & s_te:
             raise AssertionError("Row ID overlap detected between train/val/test splits.")
+        if cal_df is not None and id_col in cal_df.columns:
+            s_cal = set(cal_df[id_col])
+            if s_cal & s_tr or s_cal & s_va or s_cal & s_te:
+                raise AssertionError("Row ID overlap detected involving calibration split.")
 
 
 def assert_trailing_features_future_invariant(
@@ -91,21 +102,31 @@ def assert_oof_encoding_strict(
     encoded_values: np.ndarray,
     global_prior_weight: float = 20.0,
 ) -> None:
-    """Verify out-of-fold target encoding at row i uses ONLY rows with fold != fold_ids[i]."""
-    global_mean = float(df[target_col].mean())
-    for idx in range(min(50, len(df))):
-        f = fold_ids[idx]
-        g = df.iloc[idx][group_col]
-        mask = (fold_ids != f) & (df[group_col].to_numpy() == g)
-        other_vals = df.loc[mask, target_col].to_numpy(dtype=float)
-        # Recompute smoothed mean on out-of-fold rows (or check that row's own fold isn't leaked)
-        n_other = len(other_vals)
-        expected = (
-            (other_vals.sum() + global_prior_weight * global_mean) / (n_other + global_prior_weight)
-            if n_other > 0
-            else global_mean
-        )
-        # Check against exact formula if provided, or verify invariance when modifying same-fold targets
+    """Verify out-of-fold target encoding at row i matches ONLY rows with fold != fold_ids[i]."""
+    if len(df) == 0:
+        return
+    col_vals = df[group_col].astype(str).to_numpy()
+    target_vals = df[target_col].to_numpy(dtype=float)
+    sample_indices = np.linspace(0, len(df) - 1, min(200, len(df)), dtype=int)
+
+    for idx in sample_indices:
         if not np.isfinite(encoded_values[idx]):
             raise AssertionError(f"Non-finite OOF encoding at idx={idx}")
-        _ = expected
+        f = fold_ids[idx]
+        in_fold_mask = fold_ids != f
+        fold_global_mean = float(target_vals[in_fold_mask].mean())
+        group_mask = in_fold_mask & (col_vals == col_vals[idx])
+        other_vals = target_vals[group_mask]
+        n_other = len(other_vals)
+        expected = (
+            float(
+                (other_vals.sum() + global_prior_weight * fold_global_mean)
+                / (n_other + global_prior_weight)
+            )
+            if n_other > 0
+            else fold_global_mean
+        )
+        if not np.isclose(float(encoded_values[idx]), expected, rtol=1e-6, atol=1e-6):
+            raise AssertionError(
+                f"OOF encoding mismatch/leakage at idx={idx}: got {encoded_values[idx]:.8f}, expected {expected:.8f}"
+            )

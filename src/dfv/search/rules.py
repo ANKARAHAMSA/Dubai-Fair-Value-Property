@@ -6,6 +6,7 @@ import re
 
 from rapidfuzz import fuzz, process
 
+from dfv.config import SQFT_PER_SQM
 from dfv.search.schema import PropertyFilters, check_query_safety
 
 AREA_ALIASES: dict[str, str] = {
@@ -48,7 +49,7 @@ AREA_ALIASES: dict[str, str] = {
 }
 
 
-def _scale_price(num_str: str, unit: str | None) -> float:
+def _scale_price(num_str: str, unit: str | None, explicit_price_cue: bool = False) -> float:
     val = float(num_str.replace(",", ""))
     if unit:
         u = unit.lower().strip()
@@ -56,12 +57,14 @@ def _scale_price(num_str: str, unit: str | None) -> float:
             return val * 1_000_000.0
         if u == "k":
             return val * 1_000.0
-    if val < 100.0:
-        # Shorthand e.g. "under 1.5" in million-AED context when unit omitted alongside "budget"/"price"
+    if val >= 100_000.0:
+        return val
+    if explicit_price_cue and val < 100.0:
+        # Shorthand e.g. "budget 1.5" or "under AED 2" in million-AED context
         return val * 1_000_000.0
-    if val < 10_000.0:
+    if explicit_price_cue and val < 10_000.0:
         return val * 1_000.0
-    return val
+    return 0.0
 
 
 def _extract_areas(query_lower: str, known_areas: list[str] | None) -> list[str]:
@@ -122,6 +125,13 @@ def _extract_areas(query_lower: str, known_areas: list[str] | None) -> list[str]
                 "the",
                 "km",
                 "sqm",
+                "sqft",
+                "sq",
+                "ft",
+                "m2",
+                "budget",
+                "maximum",
+                "minimum",
             }
             content_words = [
                 w for w in words if w not in stop_words and not w.isdigit() and len(w) >= 3
@@ -211,36 +221,57 @@ def parse_query_rules(
     elif re.search(r"\b(?:good|high|strong)\s+(?:rental\s+)?yield\b", q):
         min_yield_pct = 6.5
 
-    # Price bounds (strip metro/yield phrases temporarily or require price keywords/units)
-    max_price_aed: float | None = None
-    min_price_aed: float | None = None
-    m_max_p = re.search(
-        r"(?:under|below|max(?:imum)?|less\s+than|up\s+to|budget\s*(?:of)?|<=|<)\s*(?:aed|dhs)?\s*(\d[\d,]*(?:\.\d+)?)\s*(m|million|mn|k)?\b(?!(?:\s*(?:m|km)\s*(?:from|of|to)?\s*metro|\s*%|\s*bed))",
-        q,
-    )
-    if m_max_p:
-        val_max = _scale_price(m_max_p.group(1), m_max_p.group(2))
-        if val_max >= 50_000.0:
-            max_price_aed = val_max
-
-    m_min_p = re.search(
-        r"(?:over|above|min(?:imum)?|more\s+than|from|at\s+least|>=|>)\s*(?:aed|dhs)?\s*(\d[\d,]*(?:\.\d+)?)\s*(m|million|mn|k)?\b(?!(?:\s*(?:m|km)\s*(?:from|of|to)?\s*metro|\s*%|\s*bed|\s*sqm))",
-        q,
-    )
-    if m_min_p:
-        val_min = _scale_price(m_min_p.group(1), m_min_p.group(2))
-        if val_min >= 50_000.0:
-            min_price_aed = val_min
-
-    # Size bounds (sqm)
+    # Size bounds (sqm or sqft -> converted to sqm)
     min_area_sqm: float | None = None
     max_area_sqm: float | None = None
-    m_min_a = re.search(r"(?:over|above|min(?:imum)?|>=?)\s*(\d+(?:\.\d+)?)\s*sqm\b", q)
+    size_unit_re = r"(sqm|sq\.?\s*m|m2|m²|sqft|sq\.?\s*ft)"
+    m_min_a = re.search(
+        rf"(?:over|above|min(?:imum)?|at\s+least|>=?)\s*(\d[\d,]*(?:\.\d+)?)\s*{size_unit_re}\b",
+        q,
+    )
     if m_min_a:
-        min_area_sqm = float(m_min_a.group(1))
-    m_max_a = re.search(r"(?:under|below|max(?:imum)?|<=?)\s*(\d+(?:\.\d+)?)\s*sqm\b", q)
+        raw_sz = float(m_min_a.group(1).replace(",", ""))
+        conv = raw_sz / SQFT_PER_SQM if "ft" in m_min_a.group(2) else raw_sz
+        if conv >= 15.0:
+            min_area_sqm = round(conv, 1)
+    m_max_a = re.search(
+        rf"(?:under|below|max(?:imum)?|up\s+to|<=?)\s*(\d[\d,]*(?:\.\d+)?)\s*{size_unit_re}\b",
+        q,
+    )
     if m_max_a:
-        max_area_sqm = float(m_max_a.group(1))
+        raw_sz = float(m_max_a.group(1).replace(",", ""))
+        conv = raw_sz / SQFT_PER_SQM if "ft" in m_max_a.group(2) else raw_sz
+        if conv >= 15.0:
+            max_area_sqm = round(conv, 1)
+
+    # Price bounds (exclude size/metro/yield/bedroom suffixes and require currency/unit cue for small nums)
+    max_price_aed: float | None = None
+    min_price_aed: float | None = None
+    neg_tail = (
+        r"(?!\s*(?:(?:m|km)\s*(?:from|of|to)?\s*metro|%|bed|bedrooms?|beds?|b/?r|bhk|"
+        r"sqm|sq\.?\s*m|m2|m²|sqft|sq\.?\s*ft)\b)"
+    )
+    max_pat = re.compile(
+        rf"(?:under|below|max(?:imum)?|less\s+than|up\s+to|budget\s*(?:of)?|<=|<)\s*"
+        rf"(aed|dhs)?\s*(\d[\d,]*(?:\.\d+)?)\s*(m|million|mn|k)?\b{neg_tail}"
+    )
+    for m_max_p in max_pat.finditer(q):
+        has_cue = bool(m_max_p.group(1)) or ("budget" in m_max_p.group(0))
+        val_max = _scale_price(m_max_p.group(2), m_max_p.group(3), explicit_price_cue=has_cue)
+        if val_max >= 50_000.0:
+            max_price_aed = val_max
+            break
+
+    min_pat = re.compile(
+        rf"(?:over|above|min(?:imum)?|more\s+than|from|at\s+least|>=|>)\s*"
+        rf"(aed|dhs)?\s*(\d[\d,]*(?:\.\d+)?)\s*(m|million|mn|k)?\b{neg_tail}"
+    )
+    for m_min_p in min_pat.finditer(q):
+        has_cue = bool(m_min_p.group(1))
+        val_min = _scale_price(m_min_p.group(2), m_min_p.group(3), explicit_price_cue=has_cue)
+        if val_min >= 50_000.0:
+            min_price_aed = val_min
+            break
 
     areas = _extract_areas(q, known_areas)
 

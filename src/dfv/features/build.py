@@ -332,7 +332,7 @@ def build_feature_matrix(
     work["month"] = dt.dt.month.astype(int)
     work["days_since_start"] = (dt - pd.Timestamp("2015-01-01")).dt.days.astype(int)
 
-    # 3. Project/developer lifecycle features
+    # 3. Project/developer lifecycle features (strictly evaluated at transaction date `dt`)
     if projects_df is not None and not projects_df.empty and "project_name" in projects_df.columns:
         p_meta = projects_df.drop_duplicates(subset=["project_name"])[
             [
@@ -340,9 +340,9 @@ def build_feature_matrix(
                 for c in (
                     "project_name",
                     "developer_name",
-                    "completion_pct",
                     "launch_date",
                     "completion_date",
+                    "scheduled_completion_date",
                 )
                 if c in projects_df.columns
             ]
@@ -354,21 +354,16 @@ def build_feature_matrix(
                 is_unk & work["_proj_dev"].notna(), work["_proj_dev"], work["developer_name"]
             )
             work = work.drop(columns=["_proj_dev"])
-    default_comp = pd.Series(
-        np.where(work["is_offplan"] == 1, 50.0, 100.0), index=work.index, dtype="float64"
-    )
-    if "completion_pct" not in work.columns:
-        work["completion_pct"] = default_comp
-    else:
-        work["completion_pct"] = pd.to_numeric(work["completion_pct"], errors="coerce").fillna(
-            default_comp
-        )
 
     default_age = pd.Series(
         np.where(work["is_offplan"] == 1, 0.5, 5.0), index=work.index, dtype="float64"
     )
+    launch_dt = (
+        pd.to_datetime(work["launch_date"], errors="coerce")
+        if "launch_date" in work.columns
+        else pd.Series(pd.NaT, index=work.index, dtype="datetime64[ns]")
+    )
     if "launch_date" in work.columns:
-        launch_dt = pd.to_datetime(work["launch_date"], errors="coerce")
         work["project_age_years"] = (
             ((dt - launch_dt).dt.days / 365.25).clip(0.0, 40.0).fillna(default_age)
         )
@@ -378,14 +373,26 @@ def build_feature_matrix(
     default_mtc = pd.Series(
         np.where(work["is_offplan"] == 1, 24.0, 0.0), index=work.index, dtype="float64"
     )
+    comp_dt = (
+        pd.to_datetime(work["completion_date"], errors="coerce")
+        if "completion_date" in work.columns
+        else pd.Series(pd.NaT, index=work.index, dtype="datetime64[ns]")
+    )
+
+    # Time-aware completion_pct: Ready resales = 100%, off-plan interpolated strictly at `dt` and capped <= 95%
+    interp_comp = pd.Series(50.0, index=work.index, dtype="float64")
+    has_span = launch_dt.notna() & comp_dt.notna() & (comp_dt > launch_dt)
+    span_days = (comp_dt - launch_dt).dt.days.astype("float64").replace(0.0, np.nan)
+    progress = ((dt - launch_dt).dt.days.astype("float64") / span_days).clip(0.0, 1.0)
+    interp_comp = pd.Series(
+        np.where(has_span, np.clip(5.0 + 90.0 * progress.fillna(0.5), 5.0, 95.0), 50.0),
+        index=work.index,
+        dtype="float64",
+    )
+    work["completion_pct"] = np.where(work["is_offplan"] == 0, 100.0, interp_comp)
+
     if "completion_date" in work.columns:
-        comp_dt = pd.to_datetime(work["completion_date"], errors="coerce")
         diff_months = (comp_dt - dt).dt.days / 30.4375
-        work["delivery_delay_months"] = np.where(
-            (work["is_offplan"] == 0) & diff_months.notna(),
-            np.maximum(-diff_months, 0.0),
-            0.0,
-        )
         if "months_to_completion" not in work.columns:
             work["months_to_completion"] = np.where(
                 work["is_offplan"] == 1, np.clip(diff_months.fillna(24.0), 0.0, 60.0), 0.0
@@ -395,11 +402,20 @@ def build_feature_matrix(
                 work["months_to_completion"], errors="coerce"
             ).fillna(default_mtc)
     else:
-        work["delivery_delay_months"] = 0.0
         if "months_to_completion" not in work.columns:
             work["months_to_completion"] = default_mtc
 
-    for drop_tmp in ("launch_date", "completion_date"):
+    # Delivery delay is defined only when an explicit scheduled_completion_date exists and was already passed at `dt`
+    if "scheduled_completion_date" in work.columns:
+        sched_dt = pd.to_datetime(work["scheduled_completion_date"], errors="coerce")
+        past_sched = sched_dt.notna() & (dt > sched_dt)
+        actual_end = comp_dt.where(comp_dt.notna() & (comp_dt <= dt), dt)
+        raw_delay = (actual_end - sched_dt).dt.days / 30.4375
+        work["delivery_delay_months"] = np.where(past_sched, np.maximum(raw_delay, 0.0), 0.0)
+    else:
+        work["delivery_delay_months"] = 0.0
+
+    for drop_tmp in ("launch_date", "completion_date", "scheduled_completion_date"):
         if drop_tmp in work.columns:
             work = work.drop(columns=[drop_tmp])
 

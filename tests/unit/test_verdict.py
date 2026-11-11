@@ -53,17 +53,41 @@ def test_verdict_boundaries_at_L_and_U() -> None:
 
 
 def test_verdict_thin_segment_returns_insufficient_data_with_range() -> None:
+    # < 15 comparable sales (document threshold in model_card & interview_notes) must abstain
     res = compute_verdict(
         asking_price=1_500_000,
         predicted_median=2_000_000,
         low=1_700_000,
         high=2_300_000,
-        segment_tx_count=2,
+        segment_tx_count=14,
     )
     assert res.verdict == "insufficient data"
     assert res.low == 1_700_000
     assert res.high == 2_300_000
     assert res.confidence == "Low"
+
+    # At exactly 15 comparable sales -> active directional verdict enabled
+    res_15 = compute_verdict(
+        asking_price=1_500_000,
+        predicted_median=2_000_000,
+        low=1_700_000,
+        high=2_300_000,
+        segment_tx_count=15,
+    )
+    assert res_15.verdict == "Underpriced"
+
+
+def test_verdict_high_volume_wide_interval_explains_low_confidence() -> None:
+    res = compute_verdict(
+        asking_price=2_050_000,
+        predicted_median=2_000_000,
+        low=1_300_000,
+        high=2_700_000,
+        segment_tx_count=50,
+    )
+    assert res.verdict == "Fair"
+    assert res.confidence == "Low"
+    assert "wide 90% uncertainty band" in res.reason
 
 
 def test_verdict_invalid_inputs_raise() -> None:

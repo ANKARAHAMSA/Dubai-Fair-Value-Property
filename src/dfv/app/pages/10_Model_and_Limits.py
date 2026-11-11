@@ -95,13 +95,15 @@ if tm.get("model_mdape") is not None:
 
 rolling = metrics.get("rolling_cv", [])
 if rolling:
+    cv_df = pd.DataFrame(rolling)
+    cv_df["mdape_pct"] = pd.to_numeric(cv_df["mdape"], errors="coerce") * 100.0
     fig_cv = px.line(
-        pd.DataFrame(rolling),
+        cv_df,
         x="fold_start",
-        y="mdape",
+        y="mdape_pct",
         markers=True,
         title="Rolling-Origin Cross-Validation MdAPE Across Market Windows",
-        labels={"fold_start": "6-Month Test Fold Start", "mdape": "MdAPE (fraction)"},
+        labels={"fold_start": "6-Month Test Fold Start", "mdape_pct": "Test MdAPE (%)"},
     )
     st.plotly_chart(fig_cv, width="stretch")
 
@@ -125,18 +127,26 @@ for idx, (cap, p) in enumerate(fig_paths):
 
 st.divider()
 st.subheader("What the Model Gets Wrong (Honest Error Analysis)")
+if mode == "sample":
+    st.caption(
+        "Note: The segment error breakdown below comes from the full processed DLD hold-out evaluation "
+        "(`reports/error_analysis.md`), while top-of-page KPIs show the Sample CI model."
+    )
 err_md = analyses.get("error_analysis_md", "")
 if err_md:
     st.markdown(err_md)
 else:
     st.info("Run `make train` to generate detailed segment error breakdowns.")
 
+n_active_stations = len(analyses.get("metro_stations", []))
+data_end = str(bundle.metadata.get("training_window", {}).get("test_end", "2024-08-22"))
+
 st.divider()
 st.subheader("Data Sources, Attribution & Known Gaps")
 st.markdown(
-    """
-- **Primary Target Source**: Dubai Land Department (DLD) residential sales data via Dubai Pulse (`dld_transactions-open`), using verified public extract fallback (`viewit-ai/full-dubai-pulse` through 2024-08-22) where permission-gated Dubai Pulse downloads are pending.
-- **Transit Data**: RTA Metro station coordinates from Dubai Pulse / MobilityDatabase GTFS (`mdb-904`, 55 stations) paired with curated official Route 2020 opening dates.
+    f"""
+- **Primary Target Source**: Dubai Land Department (DLD) residential sales data (`{bundle.metadata.get("dataset_mode", mode)}`, data through `{data_end}`). Processed mode uses the verified public extract fallback (`viewit-ai/full-dubai-pulse`) where permission-gated Dubai Pulse downloads are pending.
+- **Transit Data**: Active dataset contains `{n_active_stations}` metro stations (processed GTFS `mdb-904` + Route 2020 opening dates in `data/reference/stations_opening.csv`; 14-station core corridor subset in committed `data/sample/`).
 - **Known Limitations**:
   1. **No interior / floor / view attributes**: Sea views, Burj Khalifa views, high floors, corner layouts, and developer snagging/payment plans are unrecorded in DLD transaction registries.
   2. **Area-centroid fallback coordinates**: Without unit-level or geocoded building polygons (`dld_projects-open`), unseen projects degrade on spatial hold-out (see Spatial Hold-out MdAPE above) and within-area sales metro premiums cannot be isolated on centroid fallback data.

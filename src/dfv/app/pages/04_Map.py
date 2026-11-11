@@ -120,7 +120,7 @@ else:
     deck = pdk.Deck(
         layers=layers,
         initial_view_state=view,
-        map_style=None,
+        map_style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
         tooltip={"text": "{hover_title}\n{hover_detail}"},
     )
     st.pydeck_chart(deck, width="stretch")

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import json
 from pathlib import Path
 
@@ -17,6 +18,7 @@ from dfv.models.explain import (
     explain_single_prediction,
     format_aed_short,
 )
+from dfv.models.predict import predict_single_property
 from dfv.models.registry import ModelMetadataError, load_model_bundle, prepare_inference_frame
 from dfv.models.train import train_pipeline
 
@@ -115,7 +117,34 @@ def test_sample_model_training_gates_and_invariances(tmp_path: Path) -> None:
     )
     assert np.isfinite(metro_diff) and metro_diff > 0.0
 
-    # Also check active trained model if sample model exists in repo
+    # Also check active trained model & predict_single_property abstention threshold (14 vs 15)
     if (PATHS.sample_models / "metadata.json").exists():
         sample_loaded = load_model_bundle(PATHS.sample_models)
         assert sample_loaded.metadata["model_version"]
+        bundle_copy = copy.deepcopy(sample_loaded)
+        area_key = next(iter(bundle_copy.area_defaults.keys()))
+        bundle_copy.area_defaults[area_key]["segment_counts"] = {"Unit|2": 14}
+        thin_res = predict_single_property(
+            {
+                "area_name": area_key,
+                "property_type": "Unit",
+                "rooms": 2,
+                "area_sqm": 110.0,
+                "asking_price_aed": 100_000.0,
+            },
+            bundle=bundle_copy,
+        )
+        assert thin_res["verdict"] == "insufficient data"
+
+        bundle_copy.area_defaults[area_key]["segment_counts"] = {"Unit|2": 15}
+        ok_res = predict_single_property(
+            {
+                "area_name": area_key,
+                "property_type": "Unit",
+                "rooms": 2,
+                "area_sqm": 110.0,
+                "asking_price_aed": 100_000.0,
+            },
+            bundle=bundle_copy,
+        )
+        assert ok_res["verdict"] == "Underpriced"

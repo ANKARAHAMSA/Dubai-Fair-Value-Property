@@ -52,21 +52,56 @@ developer,azizi,Azizi Developments,Canonical developer name
 developer,azizi developments,Azizi Developments,Canonical developer name
 developer,dubai properties,Dubai Properties,Canonical developer name
 developer,select group,Select Group,Canonical developer name
-metro,noor bank metro station,Equiti,Historical name for Equiti station
-metro,noor bank,Equiti,Historical name for Equiti station
-metro,first abu dhabi bank metro station,InsuranceMarket,Historical name for InsuranceMarket (Sharaf DG/Mashreq)
-metro,sharaf dg metro station,InsuranceMarket,Historical name for InsuranceMarket
+metro,noor bank metro station,Onpassive,Historical name for Onpassive station
+metro,noor bank,Onpassive,Historical name for Onpassive station
+metro,al safa,Onpassive,Historical name for Onpassive station
+metro,first abu dhabi bank metro station,Equiti,Historical name for Equiti station
+metro,umm al sheif,Equiti,Historical name for Equiti station
+metro,sharaf dg metro station,InsuranceMarket,Historical name for InsuranceMarket (Mashreq/Sharaf DG)
+metro,mashreq,InsuranceMarket,Historical name for InsuranceMarket
 metro,dubai marina metro station,Sobha Realty,Historical name for Sobha Realty station
-metro,nakheel harbour & tower,Onpassive,Historical name mapping
+metro,damac properties,Sobha Realty,Historical name for Sobha Realty station
+metro,nakheel harbour & tower,Jebel Ali,Historical name for Jebel Ali interchange
+metro,nakheel harbour & tower metro station,Jebel Ali,Historical name for Jebel Ali interchange
+metro,harbour tower,Jebel Ali,HF shortened variant for Nakheel Harbour & Tower / Jebel Ali
+metro,jabal ali,Jebel Ali,GTFS transliteration variant
 metro,al rashidiya,Centrepoint,Historical name for Centrepoint station
+metro,rashidiya metro station,Centrepoint,HF variant for Centrepoint station
 metro,deira city centre,City Centre Deira,GTFS alias for City Centre Deira
 metro,burj khalifa/ dubai mall,Burj Khalifa / Dubai Mall,GTFS spacing alias
+metro,buj khalifa dubai mall metro station,Burj Khalifa / Dubai Mall,HF typo for Burj Khalifa / Dubai Mall
+metro,burj khalifa / dubai mall metro station,Burj Khalifa / Dubai Mall,Canonical station name
 metro,al jafiliya,Max,Historical name for Max station
+metro,al jafiliya metro station,Max,Historical name for Max station
 metro,al karama,ADCB,Historical name for ADCB station
 metro,etisalat,e&,Historical name for e& station
+metro,etisalat metro station,e&,Historical name for e& station
 metro,jebel ali metro station,Jebel Ali,Canonical station name
 metro,ibn battuta metro station,Ibn Battuta,Canonical station name
 metro,dmcc metro station,DMCC,Canonical station name
-metro,nakheel metro station,Nakheel,Canonical station name
+metro,jumeirah lakes towers,DMCC,Historical name for DMCC station
+metro,nakheel metro station,Al Khail,Historical name for Al Khail Red Line station
 metro,business bay metro station,Business Bay,Canonical station name
-metro,burj khalifa / dubai mall metro station,Burj Khalifa / Dubai Mall,Canonical station name
+metro,creek metro station,Creek,HF station variant
+metro,al jadaf metro station,Al Jadaf,HF station variant
+metro,al ghubaiba metro station,Al Ghubaiba,HF station variant
+metro,healthcare city metro station,Dubai Healthcare City,HF shortened variant
+metro,trade centre metro station,World Trade Centre,HF shortened variant
+metro,energy metro station,Energy,HF variant
+metro,uae exchange metro station,UAE Exchange,HF variant
+metro,danube metro station,Danube,HF variant
+metro,al rigga metro station,Al Rigga,HF variant
+metro,emirates metro station,Emirates,HF variant
+metro,emirates towers metro station,Emirates Towers,HF variant
+metro,abu hail metro station,Abu Hail,HF variant
+metro,abu baker al siddique metro station,Abu Baker Al Siddique,HF variant
+metro,al qiyadah metro station,Al Qiyadah,HF variant
+metro,al qusais metro station,Al Qusais,HF variant
+metro,al nahda metro station,Al Nahda,HF variant
+metro,salah al din metro station,Salah Al Din,HF variant
+metro,airport terminal 1 metro station,Airport Terminal 1,HF variant
+metro,airport free zone,Dubai Airport Free Zone,HF variant
+metro,palm deira metro stations,Gold Souq,Historical name for Gold Souq station
+metro,stadium metro station,Stadium,HF variant
+metro,terminal 3,Airport Terminal 3,HF variant
+metro,expo,Expo 2020,GTFS alias for Expo 2020 Route 2020 station

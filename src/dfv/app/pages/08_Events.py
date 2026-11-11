@@ -122,3 +122,8 @@ if r2020.get("available"):
         height=380,
     )
     st.plotly_chart(fig_r2, width="stretch")
+    st.caption(
+        "Caveat: Two-way FE DiD compares treated communities near Route 2020 stations (opening 2021-01 / 2021-06) "
+        "against outer/core control areas; results reflect post-COVID/Expo structural shifts and rely on area-centroid "
+        "coordinates when project-level `dld_projects-open` coordinates are absent."
+    )

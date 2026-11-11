@@ -317,87 +317,87 @@
   "time_to_catch_up": [
     {
       "area_name": "Jumeirah Village Circle",
-      "evaluated_cohorts": 43,
+      "evaluated_cohorts": 42,
       "cohorts_caught_up": 39,
       "median_catchup_months": 15.0,
-      "status": "Observed catch-up"
+      "status": "Observed forward catch-up"
     },
     {
       "area_name": "Downtown Dubai",
       "evaluated_cohorts": 19,
       "cohorts_caught_up": 19,
       "median_catchup_months": 21.0,
-      "status": "Observed catch-up"
+      "status": "Observed forward catch-up"
     },
     {
       "area_name": "Dubai Creek Harbour",
       "evaluated_cohorts": 14,
       "cohorts_caught_up": 13,
       "median_catchup_months": 21.0,
-      "status": "Observed catch-up"
+      "status": "Observed forward catch-up"
     },
     {
       "area_name": "Business Bay",
-      "evaluated_cohorts": 32,
+      "evaluated_cohorts": 31,
       "cohorts_caught_up": 31,
       "median_catchup_months": 27.0,
-      "status": "Observed catch-up"
+      "status": "Observed forward catch-up"
     },
     {
       "area_name": "Damac Hills",
       "evaluated_cohorts": 3,
       "cohorts_caught_up": 2,
       "median_catchup_months": 27.0,
-      "status": "Observed catch-up"
+      "status": "Observed forward catch-up"
     },
     {
       "area_name": "Dubai Marina",
       "evaluated_cohorts": 28,
       "cohorts_caught_up": 28,
       "median_catchup_months": 30.1,
-      "status": "Observed catch-up"
+      "status": "Observed forward catch-up"
     },
     {
       "area_name": "Discovery Gardens",
       "evaluated_cohorts": 4,
       "cohorts_caught_up": 3,
       "median_catchup_months": 36.0,
-      "status": "Observed catch-up"
+      "status": "Observed forward catch-up"
     },
     {
       "area_name": "Palm Jumeirah",
-      "evaluated_cohorts": 11,
-      "cohorts_caught_up": 11,
+      "evaluated_cohorts": 10,
+      "cohorts_caught_up": 10,
       "median_catchup_months": 36.0,
-      "status": "Observed catch-up"
+      "status": "Observed forward catch-up"
     },
     {
       "area_name": "Al Furjan",
       "evaluated_cohorts": 17,
       "cohorts_caught_up": 17,
       "median_catchup_months": 42.0,
-      "status": "Observed catch-up"
+      "status": "Observed forward catch-up"
     },
     {
       "area_name": "Dubai Hills Estate",
       "evaluated_cohorts": 16,
       "cohorts_caught_up": 16,
       "median_catchup_months": 52.5,
-      "status": "Observed catch-up"
+      "status": "Observed forward catch-up"
     },
     {
       "area_name": "Jumeirah Lake Towers",
       "evaluated_cohorts": 9,
       "cohorts_caught_up": 8,
       "median_catchup_months": 64.5,
-      "status": "Observed catch-up"
+      "status": "Observed forward catch-up"
     },
     {
       "area_name": "Dubai South",
       "evaluated_cohorts": 4,
       "cohorts_caught_up": 4,
       "median_catchup_months": 73.5,
-      "status": "Observed catch-up"
+      "status": "Observed forward catch-up"
     }
   ]
 }

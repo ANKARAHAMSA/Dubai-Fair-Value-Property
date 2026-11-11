@@ -131,44 +131,64 @@ def metro_distance_band(dist_m: pd.Series | np.ndarray) -> pd.Series:
     return pd.Series(bands, index=s.index, dtype="string")
 
 
+def resolve_station_opening_dates(metro_df: pd.DataFrame) -> pd.Series:
+    """Return normalized opening Timestamp per station row (undated non-Route2020 assumed open by 2010)."""
+    if metro_df.empty:
+        return pd.Series(dtype="datetime64[ns]")
+    if "opening_date" in metro_df.columns:
+        dt = pd.to_datetime(metro_df["opening_date"], errors="coerce")
+    else:
+        dt = pd.Series(pd.NaT, index=metro_df.index, dtype="datetime64[ns]")
+    is_r2020 = (
+        metro_df["is_route_2020"].fillna(False).astype(bool)
+        if "is_route_2020" in metro_df.columns
+        else pd.Series(False, index=metro_df.index, dtype=bool)
+    )
+    fallback = np.where(is_r2020, "2021-01-01", "2010-01-01")
+    return dt.fillna(pd.to_datetime(pd.Series(fallback, index=metro_df.index)))
+
+
 def compute_proximity_features(
     coords_df: pd.DataFrame,
     metro_df: pd.DataFrame,
     pois_df: pd.DataFrame | None = None,
     bus_stops_df: pd.DataFrame | None = None,
     preserve_existing_metro_dist: bool = True,
+    include_metro: bool = True,
 ) -> pd.DataFrame:
     """Compute metro/tram/mall/coast/airport/downtown distances and 1km POI/bus counts on unique coordinates."""
     out = coords_df.copy()
     lats = out["lat"].to_numpy(dtype=float)
     lons = out["lon"].to_numpy(dtype=float)
 
-    # 1. Metro station distance
     m_lats = metro_df["lat"].to_numpy(dtype=float)
     m_lons = metro_df["lon"].to_numpy(dtype=float)
-    m_names = metro_df["station_name"].astype(str).tolist()
-    calc_metro_dist, calc_metro_names = haversine_nearest_m(lats, lons, m_lats, m_lons, m_names)
 
-    if (
-        preserve_existing_metro_dist
-        and "metro_distance_m" in out.columns
-        and out["metro_distance_m"].notna().any()
-    ):
-        existing = pd.to_numeric(out["metro_distance_m"], errors="coerce").to_numpy(dtype=float)
-        out["dist_nearest_metro_m"] = np.where(np.isfinite(existing), existing, calc_metro_dist)
-    else:
-        out["dist_nearest_metro_m"] = np.round(calc_metro_dist, 1)
+    if include_metro:
+        # 1. Metro station distance
+        m_names = metro_df["station_name"].astype(str).tolist()
+        calc_metro_dist, calc_metro_names = haversine_nearest_m(lats, lons, m_lats, m_lons, m_names)
 
-    if "nearest_metro" not in out.columns:
-        out["nearest_metro"] = calc_metro_names
-    else:
-        out["nearest_metro"] = out["nearest_metro"].fillna(
-            pd.Series(calc_metro_names, index=out.index)
-        )
+        if (
+            preserve_existing_metro_dist
+            and "metro_distance_m" in out.columns
+            and out["metro_distance_m"].notna().any()
+        ):
+            existing = pd.to_numeric(out["metro_distance_m"], errors="coerce").to_numpy(dtype=float)
+            out["dist_nearest_metro_m"] = np.where(np.isfinite(existing), existing, calc_metro_dist)
+        else:
+            out["dist_nearest_metro_m"] = np.round(calc_metro_dist, 1)
 
-    out["metro_within_500m"] = (out["dist_nearest_metro_m"] < 500.0).astype(int)
-    out["metro_within_1000m"] = (out["dist_nearest_metro_m"] < 1000.0).astype(int)
-    out["metro_band"] = metro_distance_band(out["dist_nearest_metro_m"])
+        if "nearest_metro" not in out.columns:
+            out["nearest_metro"] = calc_metro_names
+        else:
+            out["nearest_metro"] = out["nearest_metro"].fillna(
+                pd.Series(calc_metro_names, index=out.index)
+            )
+
+        out["metro_within_500m"] = (out["dist_nearest_metro_m"] < 500.0).astype(int)
+        out["metro_within_1000m"] = (out["dist_nearest_metro_m"] < 1000.0).astype(int)
+        out["metro_band"] = metro_distance_band(out["dist_nearest_metro_m"])
 
     # 2. Tram, mall, coast, airport, downtown
     t_lats = np.array([x[1] for x in DUBAI_TRAM_STATIONS], dtype=float)

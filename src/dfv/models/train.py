@@ -16,7 +16,13 @@ import pandas as pd
 from sklearn.model_selection import KFold
 
 from dfv.config import PATHS, Paths
-from dfv.features.build import ALL_FEATURE_COLS, CATEGORICAL_FEATURE_COLS, NUMERIC_FEATURE_COLS
+from dfv.features.build import (
+    ALL_FEATURE_COLS,
+    CATEGORICAL_FEATURE_COLS,
+    NUMERIC_FEATURE_COLS,
+    _dates_to_days,
+    compute_strictly_prior_trailing_stats,
+)
 from dfv.features.leakage import (
     assert_no_target_leakage_in_features,
     assert_oof_encoding_strict,
@@ -76,15 +82,16 @@ def compute_oof_target_encoding(
         for f_idx in range(n_splits):
             in_fold = fold_ids != f_idx
             out_fold = fold_ids == f_idx
+            fold_global_mean = float(tr.loc[in_fold, target_col].mean())
             stats = (
                 pd.DataFrame({"g": col_str[in_fold], "y": tr.loc[in_fold, target_col]})
                 .groupby("g")["y"]
                 .agg(["sum", "count"])
             )
             f_map = (
-                (stats["sum"] + prior_weight * global_mean) / (stats["count"] + prior_weight)
+                (stats["sum"] + prior_weight * fold_global_mean) / (stats["count"] + prior_weight)
             ).to_dict()
-            oof_vals[out_fold] = col_str[out_fold].map(f_map).fillna(global_mean).to_numpy()
+            oof_vals[out_fold] = col_str[out_fold].map(f_map).fillna(fold_global_mean).to_numpy()
 
         tr[enc_col] = oof_vals
         assert_oof_encoding_strict(tr, col, target_col, fold_ids, oof_vals, prior_weight)
@@ -208,17 +215,21 @@ def split_temporal(
     val_full = work.loc[(dt > val_start) & (dt <= test_start)].copy()
     test_df = work.loc[dt > test_start].copy()
 
-    # Split val chronologically: first 50% for Optuna tuning, latter 50% strictly for CQR calibration
-    mid_idx = max(1, len(val_full) // 2)
-    val_tune_df = val_full.iloc[:mid_idx].copy()
-    cal_df = val_full.iloc[mid_idx:].copy()
+    # Split val chronologically on date boundaries: first half for Optuna tuning, second strictly later dates for CQR
+    val_dates = pd.to_datetime(val_full["instance_date"])
+    mid_ts = val_dates.iloc[max(1, len(val_full) // 2)]
+    val_tune_df = val_full.loc[val_dates < mid_ts].copy()
+    cal_df = val_full.loc[val_dates >= mid_ts].copy()
+    if val_tune_df.empty:
+        val_tune_df = val_full.loc[val_dates <= mid_ts].copy()
+        cal_df = val_full.loc[val_dates > mid_ts].copy()
 
     val_tune_min = pd.to_datetime(val_tune_df["instance_date"]).min()
     train_df = train_df.loc[pd.to_datetime(train_df["instance_date"]) < val_tune_min].copy()
     cal_max = pd.to_datetime(cal_df["instance_date"]).max()
     test_df = test_df.loc[pd.to_datetime(test_df["instance_date"]) > cal_max].copy()
 
-    assert_temporal_split_valid(train_df, val_full, test_df)
+    assert_temporal_split_valid(train_df, val_tune_df, test_df, cal_df=cal_df)
     return train_df, val_tune_df, cal_df, test_df
 
 
@@ -289,13 +300,177 @@ def run_rolling_origin_cv(
     return fold_results
 
 
+def _map_strictly_prior_from_reference(
+    query_df: pd.DataFrame,
+    ref_df: pd.DataFrame,
+    group_cols: list[str],
+    value_col: str,
+    windows_days: tuple[int, ...],
+    min_obs: int = 3,
+    compute_counts: bool = False,
+) -> pd.DataFrame:
+    """Evaluate strictly-prior (< date) trailing medians/counts on query_df using ONLY ref_df rows."""
+    n = len(query_df)
+    res: dict[str, np.ndarray] = {}
+    for w in windows_days:
+        res[f"med_{w}"] = np.full(n, np.nan, dtype=float)
+        if compute_counts:
+            res[f"cnt_{w}"] = np.zeros(n, dtype=float)
+    if n == 0 or ref_df.empty:
+        return pd.DataFrame(res, index=query_df.index)
+
+    q_days = _dates_to_days(query_df["instance_date"])
+    r_days_all = _dates_to_days(ref_df["instance_date"])
+    r_vals_all = pd.to_numeric(ref_df[value_col], errors="coerce").to_numpy(dtype=float)
+
+    q_groups = query_df.groupby(group_cols, sort=False, dropna=False).indices
+    r_groups = ref_df.groupby(group_cols, sort=False, dropna=False).indices
+
+    for g_key, pos_idx in q_groups.items():
+        if g_key not in r_groups:
+            continue
+        idx_arr = np.asarray(pos_idx, dtype=int)
+        t_days = q_days[idx_arr]
+        r_idx = np.asarray(r_groups[g_key], dtype=int)
+        r_d = r_days_all[r_idx]
+        r_v = r_vals_all[r_idx]
+        ord_r = np.argsort(r_d, kind="mergesort")
+        r_d = r_d[ord_r]
+        r_v = r_v[ord_r]
+
+        unique_t, inv = np.unique(t_days, return_inverse=True)
+        hi_arr = np.atleast_1d(np.searchsorted(r_d, unique_t, side="left"))
+        for w in windows_days:
+            lo_arr = np.atleast_1d(np.searchsorted(r_d, unique_t - w, side="left"))
+            u_meds = np.full(len(unique_t), np.nan, dtype=float)
+            u_cnts = np.zeros(len(unique_t), dtype=float) if compute_counts else None
+            for k in range(len(unique_t)):
+                lo, hi = int(lo_arr[k]), int(hi_arr[k])
+                cnt = hi - lo
+                if u_cnts is not None:
+                    u_cnts[k] = float(cnt)
+                if cnt >= min_obs:
+                    sv = r_v[lo:hi]
+                    sv = sv[np.isfinite(sv)]
+                    if len(sv) >= min_obs:
+                        u_meds[k] = float(np.median(sv))
+            res[f"med_{w}"][idx_arr] = u_meds[inv]
+            if u_cnts is not None:
+                res[f"cnt_{w}"][idx_arr] = u_cnts[inv]
+
+    return pd.DataFrame(res, index=query_df.index)
+
+
+def _recompute_tr_only_trailing_features(
+    tr: pd.DataFrame, te: pd.DataFrame
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Recompute area/segment/project trailing features strictly on non-held-out `tr` rows only."""
+    tr_out = tr.copy()
+    te_out = te.copy()
+
+    # 1. Non-held-out `tr` rows (no held-out projects inside area/segment aggregates)
+    tr_area = compute_strictly_prior_trailing_stats(
+        tr_out, ["area_name"], "instance_date", "price_per_sqm", (90, 180, 365), 3, True
+    )
+    tr_seg = compute_strictly_prior_trailing_stats(
+        tr_out,
+        ["area_name", "property_type", "rooms"],
+        "instance_date",
+        "price_per_sqm",
+        (365,),
+        2,
+        False,
+    )
+    tr_glob = compute_strictly_prior_trailing_stats(
+        tr_out.assign(_global="ALL"),
+        ["_global"],
+        "instance_date",
+        "price_per_sqm",
+        (365,),
+        1,
+        False,
+    )["med_365"]
+    tr_out["area_trailing_3m_ppsqm"] = tr_area["med_90"]
+    tr_out["area_trailing_6m_ppsqm"] = tr_area["med_180"]
+    tr_out["area_trailing_12m_ppsqm"] = tr_area["med_365"].fillna(tr_glob)
+    tr_out["area_trailing_6m_ppsqm"] = tr_out["area_trailing_6m_ppsqm"].fillna(
+        tr_out["area_trailing_12m_ppsqm"]
+    )
+    tr_out["area_trailing_3m_ppsqm"] = tr_out["area_trailing_3m_ppsqm"].fillna(
+        tr_out["area_trailing_6m_ppsqm"]
+    )
+    tr_out["area_trailing_3m_tx_count"] = tr_area["cnt_90"]
+    tr_out["area_trailing_12m_tx_count"] = tr_area["cnt_365"]
+    tr_out["segment_trailing_12m_ppsqm"] = tr_seg["med_365"].fillna(
+        tr_out["area_trailing_12m_ppsqm"]
+    )
+    tr_out["project_trailing_12m_ppsqm"] = tr_out["project_trailing_12m_ppsqm"].fillna(
+        tr_out["area_trailing_12m_ppsqm"]
+    )
+    tr_out["project_trailing_6m_ppsqm"] = tr_out["project_trailing_6m_ppsqm"].fillna(
+        tr_out["project_trailing_12m_ppsqm"]
+    )
+    tr_out["log_area_trailing_12m_ppsqm"] = np.log(
+        tr_out["area_trailing_12m_ppsqm"].clip(lower=1.0)
+    )
+    tr_out["log_segment_trailing_12m_ppsqm"] = np.log(
+        tr_out["segment_trailing_12m_ppsqm"].clip(lower=1.0)
+    )
+    tr_out["area_trailing_12m_yield"] = (
+        tr_out["area_trailing_12m_rent_ppsqm"] / tr_out["area_trailing_12m_ppsqm"]
+    )
+
+    # 2. Held-out `te` rows mapped strictly against non-held-out `tr_out` history only
+    te_area = _map_strictly_prior_from_reference(
+        te_out, tr_out, ["area_name"], "price_per_sqm", (90, 180, 365), 3, True
+    )
+    te_seg = _map_strictly_prior_from_reference(
+        te_out,
+        tr_out,
+        ["area_name", "property_type", "rooms"],
+        "price_per_sqm",
+        (365,),
+        2,
+        False,
+    )
+    te_glob = _map_strictly_prior_from_reference(
+        te_out.assign(_global="ALL"),
+        tr_out.assign(_global="ALL"),
+        ["_global"],
+        "price_per_sqm",
+        (365,),
+        1,
+        False,
+    )["med_365"]
+    te_out["area_trailing_12m_ppsqm"] = te_area["med_365"].fillna(te_glob)
+    te_out["area_trailing_6m_ppsqm"] = te_area["med_180"].fillna(te_out["area_trailing_12m_ppsqm"])
+    te_out["area_trailing_3m_ppsqm"] = te_area["med_90"].fillna(te_out["area_trailing_6m_ppsqm"])
+    te_out["area_trailing_3m_tx_count"] = te_area["cnt_90"]
+    te_out["area_trailing_12m_tx_count"] = te_area["cnt_365"]
+    te_out["segment_trailing_12m_ppsqm"] = te_seg["med_365"].fillna(
+        te_out["area_trailing_12m_ppsqm"]
+    )
+    te_out["project_trailing_6m_ppsqm"] = te_out["area_trailing_6m_ppsqm"]
+    te_out["project_trailing_12m_ppsqm"] = te_out["area_trailing_12m_ppsqm"]
+    te_out["log_area_trailing_12m_ppsqm"] = np.log(
+        te_out["area_trailing_12m_ppsqm"].clip(lower=1.0)
+    )
+    te_out["log_segment_trailing_12m_ppsqm"] = np.log(
+        te_out["segment_trailing_12m_ppsqm"].clip(lower=1.0)
+    )
+    te_out["area_trailing_12m_yield"] = (
+        te_out["area_trailing_12m_rent_ppsqm"] / te_out["area_trailing_12m_ppsqm"]
+    )
+    return tr_out, te_out
+
+
 def run_spatial_holdout(
     feat_df: pd.DataFrame,
     best_params: dict[str, Any],
     use_residual_hybrid: bool,
     seed: int = 42,
 ) -> dict[str, Any]:
-    """Hold out 20% of entire unseen projects to measure spatial generalization."""
+    """Hold out 20% of entire unseen projects to measure spatial generalization without held-out leakage."""
     rng = np.random.default_rng(seed)
     projects = np.array(sorted(feat_df["project_name"].unique()))
     n_hold = max(1, int(0.20 * len(projects)))
@@ -303,8 +478,7 @@ def run_spatial_holdout(
 
     tr = feat_df.loc[~feat_df["project_name"].isin(held_projects)].copy()
     te = feat_df.loc[feat_df["project_name"].isin(held_projects)].copy()
-    te["project_trailing_6m_ppsqm"] = te["area_trailing_6m_ppsqm"]
-    te["project_trailing_12m_ppsqm"] = te["area_trailing_12m_ppsqm"]
+    tr, te = _recompute_tr_only_trailing_features(tr, te)
 
     oof_cols = ["developer_name", "project_name"]
     feature_cols = [

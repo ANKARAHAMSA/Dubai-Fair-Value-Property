@@ -101,15 +101,21 @@ def compute_time_to_catch_up(
         if valid_off.empty or valid_rdy.empty:
             continue
 
+        rdy_med_map = {k: float(v) for k, v in valid_rdy["median"].items()}
         catch_months: list[float] = []
         caught_cohorts = 0
         total_cohorts = 0
+        discount_launch_cohorts = 0
         for q_start, row in valid_off.iterrows():
             entry_p = float(row["median"])
-            future_rdy = valid_rdy.loc[valid_rdy.index >= q_start]
+            # Strictly forward quarters (> q_start) avoid 0.0-month artifacts when ready prices already exceeded launch
+            future_rdy = valid_rdy.loc[valid_rdy.index > q_start]
             if len(future_rdy) < 2:
                 continue
             total_cohorts += 1
+            rdy_launch = rdy_med_map.get(q_start)
+            if rdy_launch is not None and entry_p <= rdy_launch:
+                discount_launch_cohorts += 1
             hit = future_rdy.loc[future_rdy["median"] >= entry_p]
             if not hit.empty:
                 caught_cohorts += 1
@@ -117,6 +123,12 @@ def compute_time_to_catch_up(
                 catch_months.append(max(months, 0.0))
 
         if total_cohorts >= 2:
+            if not catch_months:
+                status = "Ready prices remained below cohort entry within window"
+            elif discount_launch_cohorts > total_cohorts // 2:
+                status = "Observed catch-up (off-plan often at discount at launch)"
+            else:
+                status = "Observed forward catch-up"
             rows.append(
                 {
                     "area_name": str(area),
@@ -125,9 +137,7 @@ def compute_time_to_catch_up(
                     "median_catchup_months": round(float(np.median(catch_months)), 1)
                     if catch_months
                     else None,
-                    "status": "Observed catch-up"
-                    if catch_months
-                    else "Ready prices remained below cohort entry within window",
+                    "status": status,
                 }
             )
     return sorted(

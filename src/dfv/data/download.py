@@ -163,20 +163,29 @@ def _extract_gtfs_metro_stops(gtfs_zip: Path, reference_csv: Path) -> pd.DataFra
     stops_adapted = adapt_dataframe(stops_df, STATIONS_COLUMN_MAP)
     metro_mask = stops_adapted["station_name"].astype(str).str.contains(
         "Metro Station", case=False, na=False
-    ) & ~stops_adapted["station_name"].astype(str).str.contains("Bus", case=False, na=False)
+    ) & ~stops_adapted["station_name"].astype(str).str.contains(
+        r"\bBus\b", case=False, na=False, regex=True
+    )
     metro_raw = stops_adapted.loc[metro_mask, ["station_name", "lat", "lon"]].copy()
     if metro_raw.empty:
         metro_raw = stops_adapted[["station_name", "lat", "lon"]].copy()
 
     def _clean_station_label(raw: str) -> str:
         s = re.sub(r"\s+", " ", str(raw)).strip()
-        s = re.sub(r"\s*Metro\s*Station(?:\s*[12])?$", "", s, flags=re.IGNORECASE).strip()
+        s = re.sub(r"\s*\((?:Green|Red)\s*Line\s*\)", "", s, flags=re.IGNORECASE).strip()
+        s = re.sub(r"\s*Metro\s*Station(?:\s*[1-4])?$", "", s, flags=re.IGNORECASE).strip()
         aliases = {
             "deira city centre": "City Centre Deira",
             "burj khalifa/ dubai mall": "Burj Khalifa / Dubai Mall",
             "centrepoint": "Centrepoint",
             "max": "Max",
             "etisalat by e&": "e&",
+            "etisalat": "e&",
+            "expo": "Expo 2020",
+            "jabal ali": "Jebel Ali",
+            "mashreq": "InsuranceMarket",
+            "al safa": "Onpassive",
+            "umm al sheif": "Equiti",
         }
         low = s.lower()
         return aliases.get(low, s)

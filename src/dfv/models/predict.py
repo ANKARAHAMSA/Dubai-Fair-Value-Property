@@ -161,7 +161,7 @@ def predict_single_property(
         low=float(low_arr[0]),
         high=float(high_arr[0]),
         segment_tx_count=seg_tx_count,
-        min_segment_samples=5,
+        min_segment_samples=15,
     )
 
     explainer = explainer_or_model or bundle.point_model

@@ -58,8 +58,12 @@ def run_analysis_for_dataset(
     summary = {
         "rows_analyzed": int(len(feat_df)),
         "developer_premium_overall": dev_res.get("overall_area_quarter_fe", {}),
+        "developer_premium_project_fe": dev_res.get("overall_project_quarter_fe", {}),
         "metro_sales_bands": metro_res.get("sales_distance_bands", {}),
         "metro_rents_bands": metro_res.get("rents_distance_bands", {}),
+        "route_2020_did_post": metro_res.get("route_2020_event_study", {}).get(
+            "did_post_effect", {}
+        ),
         "top_yield_areas": yield_res.get("area_ranking", [])[:5],
         "official_index_check": events_res.get("official_index_sanity_check", {}),
         "quarterly_growth_rows": int(len(growth_df)),

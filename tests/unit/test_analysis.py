@@ -12,8 +12,9 @@ from dfv.analysis.developer_premium import (
 from dfv.analysis.events import analyze_market_events, build_monthly_price_index
 from dfv.analysis.growth_map import build_quarterly_growth_table, render_growth_timelapse
 from dfv.analysis.metro_effect import analyze_metro_effect, run_route2020_event_study
+from dfv.analysis.run_all import run_all_analyses
 from dfv.analysis.yield_score import compute_yield_and_risk, recommend_areas_for_budget
-from dfv.config import PATHS
+from dfv.config import PATHS, Paths
 from dfv.data.synth import generate_synthetic_bundle
 from dfv.features.build import build_feature_matrix
 
@@ -59,6 +60,9 @@ def test_planted_metro_and_offplan_recovery() -> None:
 
     catchup = compute_time_to_catch_up(feat_df, min_cohort_rows=5)
     assert len(catchup) > 0
+    for row in catchup:
+        if row["median_catchup_months"] is not None:
+            assert row["median_catchup_months"] > 0.0
 
 
 def test_yield_risk_ranking_and_budget_recommender() -> None:
@@ -108,3 +112,57 @@ def test_events_its_and_growth_timelapse(tmp_path: Path) -> None:
     gif_path, snap_path = render_growth_timelapse(growth_df, tmp_path)
     assert gif_path.exists() and gif_path.stat().st_size > 1000
     assert snap_path.exists() and snap_path.stat().st_size > 1000
+
+
+def test_run_all_analyses_batch_runner(tmp_path: Path) -> None:
+    """Verify analysis/run_all.py batch pipeline writes JSON, parquet, and GIF outputs."""
+    bundle = generate_synthetic_bundle(n_sales=1600, n_rents=1200, seed=19)
+    feat_df, _, _ = build_feature_matrix(
+        bundle.transactions,
+        bundle.rent_contracts,
+        bundle.metro_stations,
+        projects_df=bundle.projects,
+    )
+    sample_dir = tmp_path / "data" / "sample"
+    proc_dir = tmp_path / "data" / "processed"
+    ref_dir = tmp_path / "data" / "reference"
+    reports_dir = tmp_path / "reports"
+    figures_dir = reports_dir / "figures"
+    for d in (sample_dir, proc_dir, ref_dir, figures_dir):
+        d.mkdir(parents=True, exist_ok=True)
+
+    feat_df.to_parquet(sample_dir / "features.parquet", index=False)
+    bundle.rent_contracts.to_parquet(sample_dir / "rent_contracts.parquet", index=False)
+    bundle.metro_stations.to_parquet(sample_dir / "metro_stations.parquet", index=False)
+    bundle.sale_index.to_parquet(sample_dir / "sale_index.parquet", index=False)
+    (ref_dir / "events.csv").write_text(
+        (PATHS.reference / "events.csv").read_text(encoding="utf-8"), encoding="utf-8"
+    )
+
+    p = Paths(
+        root=tmp_path,
+        data=tmp_path / "data",
+        raw=tmp_path / "data" / "raw",
+        interim=tmp_path / "data" / "interim",
+        processed=proc_dir,
+        sample=sample_dir,
+        reference=ref_dir,
+        cache=tmp_path / "data" / "cache",
+        docs=tmp_path / "docs",
+        reports=reports_dir,
+        figures=figures_dir,
+        notebooks=tmp_path / "notebooks",
+        models=proc_dir / "models",
+        sample_models=sample_dir / "models",
+    )
+
+    summary = run_all_analyses(p)
+    assert "sample" in summary
+    assert "processed" not in summary
+    assert (sample_dir / "analysis" / "developer_premium.json").exists()
+    assert (sample_dir / "analysis" / "metro_effect.json").exists()
+    assert (sample_dir / "analysis" / "yield_risk.json").exists()
+    assert (sample_dir / "analysis" / "events_study.json").exists()
+    assert (sample_dir / "analysis" / "growth_quarterly.parquet").exists()
+    assert (reports_dir / "analysis_summary.json").exists()
+    assert (figures_dir / "price_growth_timelapse.gif").exists()

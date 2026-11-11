@@ -4,8 +4,8 @@
   "rows_total": 459145,
   "split_sizes": {
     "train": 332060,
-    "val_tune": 28238,
-    "calibration": 28239,
+    "val_tune": 27938,
+    "calibration": 28539,
     "test": 70608
   },
   "training_window": {
@@ -33,87 +33,87 @@
     },
     {
       "name": "baseline_ridge_log",
-      "mdape": 0.09484,
-      "mape": 0.13059,
-      "rmse_log": 0.17936,
-      "r2_log": 0.83067
+      "mdape": 0.09501,
+      "mape": 0.13053,
+      "rmse_log": 0.17909,
+      "r2_log": 0.83118
     },
     {
       "name": "ridge_residual_lightgbm",
-      "mdape": 0.0805,
-      "mape": 0.1115,
-      "rmse_log": 0.15706,
-      "r2_log": 0.87016
+      "mdape": 0.08139,
+      "mape": 0.11145,
+      "rmse_log": 0.15552,
+      "r2_log": 0.8727
     }
   ],
   "best_params": {
-    "n_estimators": 367,
-    "learning_rate": 0.0667178709107003,
-    "num_leaves": 32,
-    "min_child_samples": 88,
-    "subsample": 0.9497327922401265,
-    "colsample_bytree": 0.7243186887373967,
-    "reg_alpha": 0.004705059281907649,
-    "reg_lambda": 0.03549878832196503
+    "n_estimators": 202,
+    "learning_rate": 0.07742776249482199,
+    "num_leaves": 99,
+    "min_child_samples": 71,
+    "subsample": 0.9313811040057837,
+    "colsample_bytree": 0.6759156281069316,
+    "reg_alpha": 0.021181366627251397,
+    "reg_lambda": 0.022264204303769682
   },
   "optuna_trials": [
     {
       "trial": 0,
-      "val_mdape": 0.07185
+      "val_mdape": 0.07322
     },
     {
       "trial": 1,
-      "val_mdape": 0.07134
+      "val_mdape": 0.07416
     },
     {
       "trial": 2,
-      "val_mdape": 0.07437
+      "val_mdape": 0.07399
     },
     {
       "trial": 3,
-      "val_mdape": 0.07344
+      "val_mdape": 0.07349
     },
     {
       "trial": 4,
-      "val_mdape": 0.0733
+      "val_mdape": 0.07201
     },
     {
       "trial": 5,
-      "val_mdape": 0.07618
+      "val_mdape": 0.07564
     },
     {
       "trial": 6,
-      "val_mdape": 0.07464
+      "val_mdape": 0.07383
     },
     {
       "trial": 7,
-      "val_mdape": 0.07829
+      "val_mdape": 0.0771
     },
     {
       "trial": 8,
-      "val_mdape": 0.07375
+      "val_mdape": 0.07432
     },
     {
       "trial": 9,
-      "val_mdape": 0.07211
+      "val_mdape": 0.07174
     }
   ],
   "test_metrics": {
-    "model_mdape": 0.06891,
-    "model_mape": 0.09918,
-    "model_rmse_log": 0.14442,
-    "model_r2_log": 0.89022,
+    "model_mdape": 0.06936,
+    "model_mape": 0.1,
+    "model_rmse_log": 0.14539,
+    "model_r2_log": 0.88874,
     "alt_comparison_name": "ridge_residual_lightgbm",
-    "alt_comparison_mdape": 0.0805,
+    "alt_comparison_mdape": 0.08139,
     "best_baseline_name": "baseline_ridge_log",
-    "best_baseline_mdape": 0.09484,
-    "mdape_improvement_abs": 0.02593,
-    "mdape_improvement_rel_pct": 27.34,
-    "interval_coverage": 0.9012,
-    "interval_median_rel_width": 0.4694,
-    "interval_median_abs_width_aed": 635664.67,
-    "spatial_mdape": 0.19908,
-    "spatial_r2_log": 0.6288,
+    "best_baseline_mdape": 0.09501,
+    "mdape_improvement_abs": 0.02565,
+    "mdape_improvement_rel_pct": 27.0,
+    "interval_coverage": 0.8993,
+    "interval_median_rel_width": 0.4375,
+    "interval_median_abs_width_aed": 592299.45,
+    "spatial_mdape": 0.20216,
+    "spatial_r2_log": 0.6095,
     "repro_max_log_diff": 0.0
   },
   "rolling_cv": [
@@ -123,10 +123,10 @@
       "n_train": 238652,
       "n_test": 43535,
       "name": "rolling_cv_2022-08",
-      "mdape": 0.11516,
-      "mape": 0.15918,
-      "rmse_log": 0.24741,
-      "r2_log": 0.77789
+      "mdape": 0.11259,
+      "mape": 0.15849,
+      "rmse_log": 0.2478,
+      "r2_log": 0.77719
     },
     {
       "fold_start": "2023-02-22",
@@ -134,10 +134,10 @@
       "n_train": 282187,
       "n_test": 49370,
       "name": "rolling_cv_2023-02",
-      "mdape": 0.10454,
-      "mape": 0.15064,
-      "rmse_log": 0.24206,
-      "r2_log": 0.79038
+      "mdape": 0.1047,
+      "mape": 0.14844,
+      "rmse_log": 0.23887,
+      "r2_log": 0.79587
     },
     {
       "fold_start": "2023-08-22",
@@ -145,20 +145,20 @@
       "n_train": 331557,
       "n_test": 56489,
       "name": "rolling_cv_2023-08",
-      "mdape": 0.09713,
-      "mape": 0.14119,
-      "rmse_log": 0.22123,
-      "r2_log": 0.79811
+      "mdape": 0.0965,
+      "mape": 0.13477,
+      "rmse_log": 0.20455,
+      "r2_log": 0.8274
     }
   ],
   "spatial_holdout": {
     "held_out_projects": 680,
     "held_out_rows": 88057,
     "name": "spatial_unseen_projects",
-    "mdape": 0.19908,
-    "mape": 0.25472,
-    "rmse_log": 0.32551,
-    "r2_log": 0.6288
+    "mdape": 0.20216,
+    "mape": 0.26174,
+    "rmse_log": 0.33387,
+    "r2_log": 0.6095
   },
   "gates": {
     "beats_best_baseline": true,
@@ -166,5 +166,5 @@
     "reproducible_with_seed": true,
     "all_passed": true
   },
-  "api_predict_latency_ms": 12.32
+  "api_predict_latency_ms": 14.67
 }

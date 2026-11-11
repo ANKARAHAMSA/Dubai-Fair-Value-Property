@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -21,8 +22,8 @@ def test_notebook_executes_top_to_bottom(nb_path: Path, tmp_path: Path) -> None:
     env["DFV_DATA_MODE"] = "sample"
     proc = subprocess.run(
         [
-            "uv",
-            "run",
+            sys.executable,
+            "-m",
             "jupyter",
             "nbconvert",
             "--to",

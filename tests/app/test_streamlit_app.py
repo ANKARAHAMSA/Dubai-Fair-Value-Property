@@ -94,6 +94,12 @@ def test_yield_and_risk_page_budget_tool() -> None:
     at.run()
     assert not at.exception
 
+    if at.radio:
+        hm_radio = at.radio(key="yield_hm_type")
+        if "Villa" in hm_radio.options:
+            hm_radio.set_value("Villa").run()
+            assert not at.exception
+
     at.slider[0].set_value(2_500_000).run()
     assert not at.exception
     assert len(at.dataframe) >= 1
