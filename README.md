@@ -1,8 +1,10 @@
 # DubaiFairValue
 
-[![CI](https://img.shields.io/badge/CI-GitHub%20Actions-0F766E.svg)](.github/workflows/ci.yml)
+[![CI](https://github.com/ANKARAHAMSA/Dubai-Fair-Value-Property/actions/workflows/ci.yml/badge.svg)](https://github.com/ANKARAHAMSA/Dubai-Fair-Value-Property/actions/workflows/ci.yml)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-0F766E.svg)](pyproject.toml)
 [![Verification](https://img.shields.io/badge/make%20verify-PASS-0F766E.svg)](reports/VERIFICATION_REPORT.md)
+
+![DubaiFairValue — Geospatial Valuation & Uncertainty Architecture](reports/figures/hero_banner.jpg)
 
 > **One-line pitch:** Submit any Dubai residential property's specifications and asking price to get an instant fair-value estimate, a calibrated 90% prediction interval, an objective verdict (`Underpriced` / `Fair` / `Overpriced` / `insufficient data`), and plain-English SHAP cost drivers backed by Dubai Land Department transaction data.
 
@@ -102,6 +104,21 @@ Full system architecture diagram and component specs live in [docs/architecture.
 - **Econometric Market Analyses**: [src/dfv/analysis/](src/dfv/analysis/) + 5 executed notebooks in [notebooks/](notebooks/).
 - **API & Guarded NL Search**: [src/dfv/api/](src/dfv/api/) + [src/dfv/search/](src/dfv/search/) (Pydantic v2 `PropertyFilters`, optional Anthropic/OpenAI JSON extraction with deterministic regex/fuzzy rules fallback, strictly parameterized DuckDB SQL).
 - **10-Page Streamlit App**: [src/dfv/app/Home.py](src/dfv/app/Home.py) and [src/dfv/app/pages/](src/dfv/app/pages/).
+
+### Engineering Build Phases (Phases 0–7)
+
+Built strictly sequentially in eight gated milestones (`phase-0` through `phase-7`), where every phase passed `make verify` before moving forward:
+
+| Phase | Focus | Key Modules & Deliverables | Verified Gate Outcome |
+| --- | --- | --- | --- |
+| **Phase 0** | Scaffold, Tooling & Synthetic Ground-Truth (`phase-0`) | `pyproject.toml`, `Makefile`, CI workflow, `src/dfv/verify.py`, planted-effect generator (`src/dfv/data/synth.py`), ADRs (`docs/DECISIONS.md`) | Tooling, lint, secret checks & synthetic test harness green |
+| **Phase 1** | Schema-First Ingestion & Cleaning Contracts (`phase-1`) | Schema adapter (`schema.py`), Dubai Pulse/HF/GTFS downloader (`download.py`), deterministic cleaning (`clean.py`), Pandera schemas (`validate.py`), `docs/data_dictionary.md` | `1,276,960` -> `459,145` clean unflagged sales; all Pandera & Dubai ordering checks pass |
+| **Phase 2** | Geospatial Enrichment & Leakage-Safe Features (`phase-2`) | Time-aware RTA Metro opening gating (`stations.py`), Nominatim SQLite cache + centroids (`geocode.py`), OSM POIs, strictly `< t` trailing windows & fold-strict OOF assertions (`build.py`, `leakage.py`) | Zero future/same-day leakage & zero unopened station leakage verified |
+| **Phase 3** | Valuation Models, CQR Uncertainty & SHAP (`phase-3`) | 3 explicit baselines (`baseline.py`), Optuna LightGBM & small-sample `ResidualBoostedLGBM` (`train.py`, `hybrid.py`, `tune.py`), Split-CQR (`intervals.py`), MVT log-to-AED SHAP (`explain.py`), `verdict.py`, `registry.py` | Beat best baseline (`6.94%` vs `9.50%`), `89.93%` CQR coverage, spatial hold-out & failure report generated |
+| **Phase 4** | Econometric Market Analyses & Notebooks (`phase-4`) | Off-plan vs ready FE, Metro FE + Route 2020 DiD + planted-effect test, Yield & Risk, Event ITS + official index check, Growth timelapse GIF + 5 executed notebooks | Planted effects recovered; all 5 `.ipynb` notebooks execute cleanly top-to-bottom |
+| **Phase 5** | FastAPI REST API & Guarded NL Search (`phase-5`) | `/predict`, `/areas`, `/yield`, `/search`, `/health` (`api/main.py`), Pydantic v2 `PropertyFilters`, prompt-injection guardrails, rules fallback, parameterized DuckDB (`search/`) | API schema, 422 validation, warm `/predict` latency `< 500 ms`, mocked LLM & SQL safety pass |
+| **Phase 6** | 10-Page Interactive Streamlit Dashboard (`phase-6`) | `Home.py` + 9 multipage analytics/valuation/map/NL-search screens (`app/pages/`), `sqm`/`sqft` toggle, explicit Sample vs Processed banners | Headless `AppTest` smoke tests pass across all pages on sample bundle |
+| **Phase 7** | Skeptical Audit, Portfolio Docs & Cloud Packaging (`phase-7`) | Auto-rendered `README.md`, `data_card.md`, `model_card.md`, `architecture.md`, `interview_notes.md`, `linkedin_post.md`, `REVIEW_LOG.md`, `DEPLOY.md`, `Dockerfile`, `requirements.txt` | Clean-clone `DFV_DATA_MODE=sample` & processed `make verify` pass (`PASS`, `0` skipped checks) |
 
 ---
 

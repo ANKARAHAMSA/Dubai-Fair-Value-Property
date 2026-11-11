@@ -21,6 +21,8 @@ def test_readme_matches_rendered_output_and_metrics() -> None:
     assert f"{tm['best_baseline_mdape'] * 100:.2f}%" in rendered
     assert f"{tm['interval_coverage'] * 100:.2f}%" in rendered
     assert f"{tm['spatial_mdape'] * 100:.2f}%" in rendered
+    assert "hero_banner.jpg" in rendered
+    assert "Engineering Build Phases (Phases 0" in rendered
     assert "What the Model Gets Wrong" in rendered
     assert "make setup && make data && make app" in rendered
     assert "Not Financial or Appraisal Advice" in rendered

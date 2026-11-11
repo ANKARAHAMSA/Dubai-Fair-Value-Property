@@ -14,7 +14,7 @@ Three findings that stood out when the numbers ran:
 
 Built with Python, DuckDB, Pandera, LightGBM, SHAP, FastAPI (`14.7 ms` warm `/predict`), parameterized NL search, and a 10-page Streamlit app.
 
-Explore it here: [Live Dashboard Link Placeholder] | Code: [GitHub Repo Link Placeholder]
+Explore it here: [Live Dashboard Link Placeholder] | Code: https://github.com/ANKARAHAMSA/Dubai-Fair-Value-Property
 
 #DubaiRealEstate #DataScience #MachineLearning #PropTech #MLOps #ConformalPrediction #UAE
 

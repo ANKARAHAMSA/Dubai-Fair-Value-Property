@@ -16,7 +16,7 @@ The repository already ships the three deployment artifacts required by Streamli
 1. Push your GitHub repository to `main` (never commit `data/raw/`, `data/processed/`, or `.env`).
 2. Visit <https://share.streamlit.io/>, sign in with GitHub, and click **New app**.
 3. Configure:
-   - **Repository:** `<your-github-username>/dubai-fair-value`
+   - **Repository:** `ANKARAHAMSA/Dubai-Fair-Value-Property`
    - **Branch:** `main`
    - **Main file path:** `src/dfv/app/Home.py`
    - **Python version (Advanced settings):** `3.12`
