@@ -1,9 +1,9 @@
 # DubaiFairValue Verification Report
 
-- **Timestamp (UTC)**: `2026-11-11T05:55:37Z`
-- **Git SHA**: `0b832ce`
+- **Timestamp (UTC)**: `2026-11-11T06:01:56Z`
+- **Git SHA**: `3a1b88a`
 - **Data Manifest Hash**: `946ce591cc0c55b7`
-- **Test Count**: `27`
+- **Test Count**: `36`
 - **Code Coverage (`src/dfv`)**: `80%`
 - **Overall Status**: `PASS`
 
@@ -12,8 +12,8 @@
 | Check | Status | Details |
 | --- | --- | --- |
 | Lint & mypy | **PASS** | ruff check/format and mypy passed |
-| Secrets & .env gitignore | **PASS** | Scanned 46 files cleanly |
-| Pytest & coverage | **PASS** | 27 passed, coverage 80% |
+| Secrets & .env gitignore | **PASS** | Scanned 60 files cleanly |
+| Pytest & coverage | **PASS** | 36 passed, coverage 80% |
 | Data contracts (Pandera) | **PASS** | Contracts passed |
 | Model acceptance gates | **SKIPPED** | Scheduled for Phase 3 |
 | API contract & latency tests | **SKIPPED** | Scheduled for Phase 5 |
