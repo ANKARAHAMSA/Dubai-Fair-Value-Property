@@ -44,6 +44,7 @@ data/processed/*
 !data/processed/.gitkeep
 data/cache/*
 !data/cache/.gitkeep
+cache/
 *.sqlite
 *.sqlite3
 *.db
