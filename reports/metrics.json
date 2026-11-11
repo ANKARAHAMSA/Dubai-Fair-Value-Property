@@ -166,5 +166,5 @@
     "reproducible_with_seed": true,
     "all_passed": true
   },
-  "api_predict_latency_ms": 14.65
+  "api_predict_latency_ms": 12.32
 }
