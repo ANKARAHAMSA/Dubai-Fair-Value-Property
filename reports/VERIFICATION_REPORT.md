@@ -1,8 +1,8 @@
 # DubaiFairValue Verification Report
 
-- **Timestamp (UTC)**: `2026-11-11T07:22:41Z`
+- **Timestamp (UTC)**: `2026-11-11T07:28:31Z`
 - **Data Mode**: `processed`
-- **Git SHA**: `1579e3f`
+- **Git SHA**: `56a6f9f`
 - **Data Manifest Hash**: `6580090e6cf82820`
 - **Test Count**: `83`
 - **Code Coverage (`src/dfv`)**: `89%`
@@ -17,7 +17,7 @@
 | Pytest & coverage | **PASS** | 83 passed, coverage 89% |
 | Data contracts (Pandera) | **PASS** | Contracts passed (3 checks) |
 | Model acceptance gates | **PASS** | Model MdAPE=0.06936, Best baseline MdAPE=0.09501, 90% coverage=0.8993 |
-| API contract & latency tests | **PASS** | API tests passed (warm /predict median=16.05 ms) |
+| API contract & latency tests | **PASS** | API tests passed (warm /predict median=13.47 ms) |
 | Streamlit app smoke tests | **PASS** | App smoke tests passed (8 tests) |
 | Notebook execution | **PASS** | 5 notebooks executed |
 
@@ -27,7 +27,7 @@
 - Best Baseline MdAPE: `0.09501`
 - Nominal 90% Interval Coverage: `0.8993`
 - Spatial Hold-out MdAPE: `0.20216`
-- API `/predict` Warm Latency (ms): `16.05`
+- API `/predict` Warm Latency (ms): `13.47`
 
 ## Skipped Checks & Justifications
 

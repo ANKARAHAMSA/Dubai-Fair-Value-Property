@@ -6,7 +6,8 @@ from dfv.config import PATHS, SQFT_PER_SQM, ensure_dirs, get_data_mode
 
 
 def test_paths_exist_and_constants() -> None:
-    assert PATHS.root.name == "dubai-fair-value"
+    assert (PATHS.root / "pyproject.toml").exists()
+    assert (PATHS.root / "src" / "dfv").is_dir()
     assert abs(SQFT_PER_SQM - 10.7639) < 1e-6
     ensure_dirs()
     assert PATHS.sample.exists()

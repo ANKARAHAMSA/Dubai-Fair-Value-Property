@@ -46,12 +46,14 @@ def test_registry_refuses_missing_or_incomplete_metadata(tmp_path: Path) -> None
 
 
 def test_sample_model_training_gates_and_invariances(tmp_path: Path) -> None:
-    bundle_data = generate_synthetic_bundle(n_sales=2200, n_rents=2000, seed=42)
+    bundle_data = generate_synthetic_bundle(n_sales=5000, n_rents=2000, seed=42)
     feat_df, _, _ = build_feature_matrix(
         bundle_data.transactions,
         bundle_data.rent_contracts,
         bundle_data.metro_stations,
         projects_df=bundle_data.projects,
+        cache_dir=tmp_path / "cache",
+        raw_dir=tmp_path / "raw",
     )
     feat_path = tmp_path / "features.parquet"
     feat_df.to_parquet(feat_path, index=False)
@@ -62,9 +64,10 @@ def test_sample_model_training_gates_and_invariances(tmp_path: Path) -> None:
         model_out_dir=model_dir,
         reports_dir=tmp_path / "reports",
         figures_dir=tmp_path / "figures",
+        raw_dir=tmp_path / "raw",
         dataset_mode="sample",
         seed=42,
-        n_trials=4,
+        n_trials=6,
         write_reports=True,
     )
 

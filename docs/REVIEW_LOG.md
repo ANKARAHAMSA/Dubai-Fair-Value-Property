@@ -44,6 +44,6 @@ Before final release, an independent read-only skeptical audit inspected the ful
 
 ## Post-Audit Verification Summary
 
-- **Full Processed Pipeline (`459,145` unflagged DLD sales):** Out-of-time `lightgbm_tuned` **`6.94%` MdAPE** vs `9.50%` best baseline (`baseline_ridge_log`, `+27.00%` relative gain), **`89.93%`** CQR 90% coverage, **`20.22%`** unseen-project spatial hold-out MdAPE (`680` projects), warm FastAPI `/predict` median **`14.67 ms`**.
-- **Sample CI / Clean-Clone Mode (`DFV_DATA_MODE=sample`):** `ResidualBoostedLGBM` **`6.45%` MdAPE** vs `6.72%` Ridge baseline, **`91.67%`** CQR 90% coverage, **`6.77%`** spatial hold-out MdAPE.
+- **Full Processed Pipeline (`459,145` unflagged DLD sales):** Out-of-time `lightgbm_tuned` **`6.94%` MdAPE** vs `9.50%` best baseline (`baseline_ridge_log`, `+27.00%` relative gain), **`89.93%`** CQR 90% coverage, **`20.22%`** unseen-project spatial hold-out MdAPE (`680` projects), warm FastAPI `/predict` median **`14.67 ms`** (`<= 16.5 ms` across re-runs).
+- **Sample CI / Clean-Clone Mode (`DFV_DATA_MODE=sample`):** `ResidualBoostedLGBM` **`6.45%` MdAPE** vs `6.72%` Ridge baseline, **`91.67%`** CQR 90% coverage, **`6.77%`** spatial hold-out MdAPE. An isolated `git archive` clean-clone smoke run additionally caught two test-portability bugs (`tests/unit/test_config.py` asserting `PATHS.root.name == "dubai-fair-value"` instead of structural markers, and `tests/unit/test_models.py` implicitly reading local gitignored `data/cache/`/`data/raw/` on `n=2,200`), both fixed with isolated `tmp_path` directories and `n_sales=5,000`.
 - **Verification Gate (`make lint` & `make verify`):** **`83 passed`**, **`89%` code coverage across `src/dfv`**, **`0` skipped checks**, **`Overall Status: PASS`**.
